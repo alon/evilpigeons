@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import sys
 
 import pygame
@@ -100,8 +99,4 @@ def main(argv):
         # FPS for lamers
         #pygame.time.delay(g.dt)
         clock.tick(g.fps)
-
-
-if __name__ == '__main__':
-    main(sys.argv)
 
