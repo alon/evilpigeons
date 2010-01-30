@@ -121,7 +121,10 @@ class Pigeon(SpriteWorld):
         if self._rect.center[0] < g.width / 2:
             sprites = [pygame.transform.flip(sprite, True, False) for sprite in sprites]
         sprites.append(self._orig_sprite)
-        self._action = self.do_animate([(x, 0) for x in sprites]*3)
+        channel = g.sounds['pigeon_flap'].play()
+        self._action = self.do_end(
+            self.do_animate([(x, 0) for x in sprites]*3),
+            end=lambda: channel.stop())
 
     # die
     def onhit(self, hitter):

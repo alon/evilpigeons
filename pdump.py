@@ -58,7 +58,7 @@ def main(argv):
     screen = pygame.display.set_mode(g.size)
 
     # Help screens (no menu system)
-    for help_screen in ['help1.jpg', 'help2.jpg']:
+    for help_screen in ['intro.png', 'help1.png', 'help2.png']:
         splash(screen, filename=help_screen)
 
     # Start game
