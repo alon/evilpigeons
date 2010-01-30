@@ -1,9 +1,9 @@
 import pygame
 
 class Sprite(object):
-    def __init__(self, location):
+    def __init__(self, location, filename):
         self._start_location = location
-        self._sprite = pygame.image.load("ball.png")
+        self._sprite = pygame.image.load(filename)
         self._rect = self._sprite.get_rect()
         self.set_pos(*self._start_location)
         self._state = None
@@ -11,6 +11,9 @@ class Sprite(object):
 
     def set_pos(self, x, y):
         self._rect.center = x, y
+
+    def set_pos_from_mouse_pos(self):
+        self._rect.center = pygame.mouse.get_pos()
 
     # The event system: self._action is a generator, that does stuff
     # the simulate function simply lets it run until the next yield.

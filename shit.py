@@ -7,7 +7,7 @@ from mathutil import interpolate
 
 class Shit(Sprite):
     def __init__(self, location, target):
-        Sprite.__init__(self, location)
+        Sprite.__init__(self, location=location, filename='ball.png')
         self._target = target
         self._shit_path = interpolate(10, self._start_location, self._target)
         self._action = itertools.chain(

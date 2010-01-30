@@ -9,7 +9,7 @@ import globals as g
 
 class Pigeon(Sprite):
     def __init__(self, world, location, key, dive_path, return_path):
-        Sprite.__init__(self, location)
+        Sprite.__init__(self, location=location, filename='pigeon_fly.jpg')
         self._world = world
         self._key = key
         self._dive_path = dive_path # predetermined path (later - generated?)
