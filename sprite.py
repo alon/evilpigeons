@@ -36,14 +36,12 @@ class Sprite(object):
         self._sprite = pygame.transform.scale(self._orig_sprite, target_size)
         self._rect = self._sprite.get_rect()
         self._rect.center = center
-        print self._rect
 
     def rotate(self, angle):
         angle = angle * 180 / pi
         center = self._rect.center
         self._sprite = pygame.transform.rotate(self._orig_sprite, angle)
         self._rect = self._sprite.get_rect()
-        print self._rect
         self._rect.center = center
 
     # The event system: self._action is a generator, that does stuff

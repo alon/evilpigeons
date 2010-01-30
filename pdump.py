@@ -39,6 +39,8 @@ def iter_key_events():
 def main(argv):
     # Init pygame
     pygame.init()
+    if not '--window' in g.argv:
+        pygame.display.set_mode((1024, 768), pygame.HWSURFACE | pygame.FULLSCREEN)
     print pygame.mixer.get_init()
     pygame.display.set_caption('Evil Pigeons')
     pygame.mouse.set_visible(0)
