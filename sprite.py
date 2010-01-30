@@ -25,6 +25,10 @@ class Sprite(object):
         self._rect.center = pygame.mouse.get_pos()
 
     # Sprite helpers
+    def set_sprite(self, sprite):
+        self._sprite = sprite
+        self._rect = self._sprite.get_rect()
+
     def scale(self, factor):
         center = self._rect.center
         start_width, start_height = self._orig_rect.size
@@ -59,8 +63,16 @@ class Sprite(object):
         return next # used to say "we are done", i.e. to delete bombs
 
     # Some default actions
-    def do_path(self, path):
-        for x, y in path:
+    def do_path(self, path, sprite_iter = None):
+        if sprite_iter == None:
+            sprite_iter = itertools.repeat(self._sprite)
+        last_x = self._rect.center[0]
+        for (x, y), sprite in zip(path, sprite_iter):
+            # turn sprite to the right direction. We assume the images are always facing left
+            if x > last_x:
+                print "flipped"
+                sprite = pygame.transform.flip(sprite, True, False) # flip_x, flip_y
+            self.set_sprite(sprite)
             self.set_pos(x, y)
             yield 'movement'
 

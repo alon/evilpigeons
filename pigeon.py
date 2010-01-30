@@ -83,7 +83,7 @@ class PigeonController(object):
 class Pigeon(SpriteWorld):
 
     def __init__(self, controller, location, key, dive_path, return_path):
-        SpriteWorld.__init__(self, world=controller._world, location=location, filename='pigeon_fly.jpg')
+        SpriteWorld.__init__(self, world=controller._world, location=location, filename='pigeon_sit.png')
         self._controller = controller
         self._key = key
         self._dive_path = dive_path # predetermined path (later - generated?)
@@ -91,9 +91,10 @@ class Pigeon(SpriteWorld):
         self._target = g.unit_pos_to_screen_pos(*g.config.car_start_position)
         flap_steps = 3
         d = flap_delay_steps = 2
-        flap_sprite = data.get_sprite('pigeon_flap.png')
-        a, b = flap_sprite, self._sprite
-        self._flap_sprites = sum([[(a, d), (b, d)] for i in xrange(flap_steps)], []) + [(self._sprite, 0)]
+        self._flap_sprites = [data.get_sprite(sprite) for sprite in ['pigeon_flap_up.png', 'pigeon_flap_down.png']]
+        self._flap_sprite_iter = itertools.cycle(self._flap_sprites)
+        a, b = self._flap_sprites
+        self._diversion_flap_sprites = sum([[(a, d), (b, d)] for i in xrange(flap_steps)], []) + [(self._sprite, 0)]
 
     def defecate(self):
         self.general_shoot(projectile_class=Shit, location=self._rect.midbottom, target=self._target)
@@ -108,13 +109,16 @@ class Pigeon(SpriteWorld):
         if self.isdead(): return
         self._state = 'diving'
         self._action = itertools.chain(
-            self.do_path(self._dive_path),
+            self.do_path(self._dive_path, sprite_iter = self._flap_sprite_iter),
             self.do_f(self.defecate),
-            self.do_path(self._return_path))
+            self.do_path(self._return_path, sprite_iter = self._flap_sprite_iter))
 
     def diversion_flap(self):
         self._state = 'diversion_flap'
-        self._action = self.do_animate(self._flap_sprites)
+        sprites = self._flap_sprites
+        if self._rect.center[0] < g._width / 2:
+            sprites = [pygame.transform.flip(sprite, True, False) for sprite in sprites]
+        self._action = self.do_animate([(x, 0) for x in sprites]*3)
 
     # die
     def onhit(self, hitter):
