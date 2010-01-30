@@ -1,3 +1,9 @@
+# Copyright Evil Pegions team Global Game Jam 2010:
+#  Simon Reisman
+#  Omer Nainudel
+#  Ori Cohen
+#  Alon Levy
+
 class KeyMap(object):
 
     IGNORE_MOD = -1

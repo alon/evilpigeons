@@ -1,11 +1,11 @@
 # Copyright Evil Pegions team Global Game Jam 2010:
 #  Simon Reisman
-#  Near Privman
-#  Benny?
-#  Omry
-#  Ori #2
-#  Ori
+#  Omer Nainudel
+#  Ori Cohen
 #  Alon Levy
+#
+# This code is licensed under the Creative Commons License. For further details,
+# see the LICENSE
 
 import os
 import sys
@@ -33,7 +33,10 @@ def main(argv):
     # Init pygame
     pygame.init()
     if not '--window' in g.argv:
-        pygame.display.set_mode((1024, 768), pygame.HWSURFACE | pygame.FULLSCREEN)
+        #import pdb; pdb.set_trace()
+        pygame.display.set_mode((1024, 768),
+            pygame.NOFRAME | pygame.DOUBLEBUF |
+            pygame.FULLSCREEN) #pygame.HWSURFACE
     print pygame.mixer.get_init()
     pygame.display.set_caption('Evil Pigeons')
     pygame.mouse.set_visible(0)

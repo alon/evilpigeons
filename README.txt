@@ -9,7 +9,7 @@ Python version: The game was tested with python 2.6.4, but should work with 2.4 
 
 Ubuntu: sudo apt-get install python-numpy python-pygame
 Linux (non ubuntu): install the python numpy and pygame packages
-Window: run the supplied exe. To run from source, get the exe/msi installations for python-numpy and pygame
+Window: in release/windows run main.exe
 Mac OS X: run the supplied dmx. Development was not tested on mac (but it should be fine)
 
 Running from Installer

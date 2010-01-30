@@ -1,3 +1,12 @@
+# Copyright Evil Pegions team Global Game Jam 2010:
+#  Simon Reisman
+#  Omer Nainudel
+#  Ori Cohen
+#  Alon Levy
+#
+# This code is licensed under the Creative Commons License. For further details,
+# see the LICENSE
+
 from math import pi, atan2
 import itertools
 
