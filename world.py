@@ -29,8 +29,8 @@ class World(EventHandler):
     def update_car_value(self, car_value):
         print "car value = %s" % car_value
         self.car_value = car_value
-        self._car_value_text = self._font.render("%s$" % (self._car_value), 1, g.yellow)
-        self._car_value_rect = self._car_value_text.get_rect(centerx=g.width*9/10, centery = g.height*9/10)
+        self._car_value_text = self._font.render("Car Value: %s$" % (self._car_value), 1, g.yellow)
+        self._car_value_rect = self._car_value_text.get_rect(centerx=g.width*85/100, centery = g.height*9/10)
 
     def _restart(self):
         self.update_car_value(g.start_car_value)
