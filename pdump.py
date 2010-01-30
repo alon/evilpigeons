@@ -29,11 +29,12 @@ def quit():
     sys.exit()
 
 def iter_key_events():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
-        elif event.type == KEYDOWN:
-            yield event.key, event.mod
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            elif event.type == KEYDOWN:
+                yield event.key, event.mod
 
 def main(argv):
     # Init pygame
@@ -68,7 +69,6 @@ def main(argv):
         help_rect = help_sprite.get_rect()
         screen.blit(help_sprite, help_rect)
         for key, mod in iter_key_events():
-            show_splash(help_screen)
             break
 
     # Start game
