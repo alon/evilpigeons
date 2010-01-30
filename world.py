@@ -14,6 +14,7 @@ class World(EventHandler):
     def __init__(self):
         super(World, self).__init__()
         self._background_channel = g.sounds['pigeon_background']
+        self._background_channel.set_volume(0.8)
         self._restart()
 
     def _restart(self):

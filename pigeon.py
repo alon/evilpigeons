@@ -78,8 +78,10 @@ class PigeonController(object):
             p.diversion_flap()
 
     def pigeon_hit(self, pigeon):
+        print "hit +1"
         self._pigeons_hit += 1
         if self._pigeons_hit == len(self._pigeons):
+            print "%s == %s" % (self._pigeons_hit, len(self._pigeons))
             self._world.pigeons_dead_long_live_the_car()
 
 class Pigeon(SpriteWorld):
@@ -138,7 +140,7 @@ class Pigeon(SpriteWorld):
     # die
     def onhit(self, hitter):
         from crosshair import Bullet
-        if not hitter.__class__ == Bullet or not self.is_unprotected_from_hit(): return
+        if not hitter.__class__ == Bullet or not self.is_unprotected_from_hit() or self._state == 'dying': return
         def explode_animation():
             # create a bunch of sprites of moving trianagles to outside
             s = pygame.Surface(size=(500,500))
@@ -157,11 +159,11 @@ class Pigeon(SpriteWorld):
                 print "explode"
                 yield 'explode'
             self.hide()
-            self.killed(killer=hitter)
         # explode animation
         # TODO: make explosion work
         #self._action = explode_animation()
 
+        self.killed(killer=hitter)
         print "PIGEON DOWN! PIGEON DOWN!"
         g.sounds['pigeon_hit'].play()
         print g.sounds['pigeon_hit'].get_length()
