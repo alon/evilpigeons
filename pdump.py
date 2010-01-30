@@ -46,23 +46,28 @@ for i, (x, y) in enumerate(pigeons_start_positions):
     pigeons_data.append(dict(location=(int(x*g.width), int(y*g.height)), key=key,
                              dive_path=dive_path, return_path=return_path))
 
-# Init pygame
-pygame.init()
-pygame.display.set_caption('Evil Pigeons')
-pygame.mouse.set_visible(0)
-clock = pygame.time.Clock()
-
 class PigeonController(object):
 
-    def __init__(self, pigeons):
+    def __init__(self, pigeons, keymap):
         self._n = len(pigeons)
         self._pigeons = pigeons
+        self._setup_keymap(keymap)
+
+    def _setup_keymap(self, keymap):
+        for i, p in enumerate(self._pigeons):
+            keymap.add(p._key, lambda i=i: pcontroller.try_dive(i))
+            keymap.add(p._key, lambda i=i: pcontroller.try_diversion_flap(i), mod=pygame.KMOD_SHIFT)
 
     def try_dive(self, i):
         # only one can dive at a time
         if any([p.isdiving() for p in self._pigeons]):
             return
         self._pigeons[i].start_dive()
+
+    def try_diversion_flap(self, i):
+        p = self._pigeons[i]
+        if not p.isdiving():
+            p.diversion_flap()
 
 class World(object):
 
@@ -72,15 +77,13 @@ class World(object):
     def add_sprite(self, sprite):
         self._sprites.append(sprite)
 
-
-
     def simulate(self):
+        """ core interactions - simulate everything, collide everything, O(n^2) """
         removed = []
         for i, s in enumerate(self._sprites):
             if s.simulate() == 'killme':
                 removed.append(i)
         # Check for collision, kill collided stuff
-        # O(n^2)..
         for i_src in xrange(len(self._sprites)):
             for i_dest in xrange(i_src, len(self._sprites)):
                 src, dest = self._sprites[i_src], self._sprites[i_dest]
@@ -107,17 +110,9 @@ class KeyMap(object):
     def onkey(self, key, mod):
         if key in self._map:
             for f_mod, func in self._map[key]:
-                if not mod or (mod & f_mod):
+                if (not mod and not f_mod) or (mod & f_mod):
                     return func() # takes the first
         return None
-
-# Build game parts
-keymap = KeyMap()
-world = World([])
-pigeons = [Pigeon(world=world, **d) for d in pigeons_data]
-pcontroller = PigeonController(pigeons)
-for i, p in enumerate(pigeons):
-    keymap.add(p._key, lambda i=i: pcontroller.try_dive(i))
 
 class BirdPosRecorder(object):
     def __init__(self):
@@ -135,6 +130,26 @@ class BirdPosRecorder(object):
         fd = open(PIGEONS_START_POSITIONS_JSON, 'w+')
         json.dump(self._positions, fd)
 
+def quit():
+    print "Quitting.."
+    sys.exit()
+
+# Init pygame
+pygame.init()
+pygame.display.set_caption('Evil Pigeons')
+pygame.mouse.set_visible(0)
+clock = pygame.time.Clock()
+
+# Build game parts
+keymap = KeyMap()
+keymap.add(pygame.K_ESCAPE, quit) # windows has mod == 4096, linux has mod == 0
+keymap.add(pygame.K_ESCAPE, quit, mod=4096) # windows has mod == 4096, linux has mod == 0
+world = World([])
+pigeons = [Pigeon(world=world, **d) for d in pigeons_data]
+pcontroller = PigeonController(pigeons=pigeons, keymap=keymap)
+for p in pigeons:
+    world.add_sprite(p)
+
 if '--setpos' in sys.argv:
     print "Use Ctrl-<Num> to set pigeon position to mouse position"
 
@@ -142,13 +157,6 @@ if '--setpos' in sys.argv:
     for i in xrange(len(pigeons)):
         keymap.add(num_to_numkey(i), lambda i=i: bird_pos_recorder.set_bird_pos(i), pygame.KMOD_CTRL)
     keymap.add(ord('r'), bird_pos_recorder.record_poses)
-
-def quit():
-    print "Quitting.."
-    sys.exit()
-keymap.add(pygame.K_ESCAPE, quit, 2**32 - 1) # windows has mod == 4096, linux has mod == 0. 2**32 - 1 should catch all
-for p in pigeons:
-    world.add_sprite(p)
 
 def main(argv):
     screen = pygame.display.set_mode(g.size)

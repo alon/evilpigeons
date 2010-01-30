@@ -14,12 +14,20 @@ class Pigeon(SpriteWorld):
         self._dive_path = dive_path # predetermined path (later - generated?)
         self._return_path = return_path
         self._target = (int(g.width*0.5), int(g.height*0.5))
+        flap_steps = 3
+        d = flap_delay_steps = 2
+        flap_sprite = pygame.image.load('pigeon_flap.png')
+        a, b = flap_sprite, self._sprite
+        self._flap_sprites = sum([[(a, d), (b, d)] for i in xrange(flap_steps)], []) + [(self._sprite, 0)]
 
     def defecate(self):
         self.general_shoot(projectile_class=Shit, location=self._rect.midbottom, target=self._target)
 
     def isdiving(self):
         return self._state == 'diving'
+
+    def is_unprotected_from_hit(self):
+        return self.isdiving() # TODO - check if out of perch
 
     def start_dive(self):
         self._state = 'diving'
@@ -28,9 +36,13 @@ class Pigeon(SpriteWorld):
             self.do_f(self.defecate),
             self.do_path(self._return_path))
 
+    def diversion_flap(self):
+        self._state = 'diversion_flap'
+        self._action = self.do_animate(self._flap_sprites)
+
     # die
     def onhit(self, dest):
         from crosshair import Bullet
-        if dest.__class__ == Bullet:
+        if dest.__class__ == Bullet and self.is_unprotected_from_hit():
             self.killed(dest)
 

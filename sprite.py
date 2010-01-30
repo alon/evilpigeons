@@ -61,6 +61,14 @@ class Sprite(object):
         # yield the special "killme" code for pdump.World
         yield 'killme'
 
+    def do_animate(self, sprites):
+        """ animate in place - hopefully the sprites are the same size, but we don't care """
+        for sprite, delay_steps in sprites:
+            self._sprite = sprite
+            yield 'animate'
+            for i in xrange(delay_steps):
+                yield 'animate_delay'
+
     def do_f(self, f):
         yield f()
 
