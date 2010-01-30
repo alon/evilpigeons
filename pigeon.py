@@ -116,7 +116,7 @@ class Pigeon(SpriteWorld):
     def diversion_flap(self):
         self._state = 'diversion_flap'
         sprites = self._flap_sprites
-        if self._rect.center[0] < g._width / 2:
+        if self._rect.center[0] < g.width / 2:
             sprites = [pygame.transform.flip(sprite, True, False) for sprite in sprites]
         self._action = self.do_animate([(x, 0) for x in sprites]*3)
 
