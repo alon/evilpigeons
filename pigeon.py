@@ -136,9 +136,12 @@ class Pigeon(SpriteWorld):
             sprites = [pygame.transform.flip(sprite, True, False) for sprite in sprites]
         sprites.append(self._orig_sprite)
         channel = self._start_flap_sound()
-        self._action = self.do_end(
-            self.do_animate([(x, 0) for x in sprites]*3),
-            end=lambda channel=channel: channel.stop())
+        flap_animation_gen = self.do_animate([(x, 0) for x in sprites]*3)
+        if not channel: # can happen if we run out of channels, max defaults to 8
+            print "Warning: ran out of channels"
+            self._action = flap_animation_gen
+        else:
+            self._action = self.do_end(flap_animation_gen, end=lambda channel=channel: channel.stop())
 
     # die
     def onhit(self, hitter):
