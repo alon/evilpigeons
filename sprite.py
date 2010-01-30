@@ -1,4 +1,4 @@
-from math import pi
+from math import pi, atan2
 import itertools
 
 import pygame
@@ -100,13 +100,18 @@ class Sprite(object):
             yield 'movement'
 
     def do_path_with_size(self, path):
+        """ path and change size with path and do rotation according to path direction"""
         self._active_path = path
         self._active_i = 0
         start_size = start_width, start_height = self._rect.size
+        ex, ey, ration = path[-1]
+        sx, sy = self._rect.center
+        # we assume the angle of the projectile is constant, according to start and end points of path
+        angle = (pi - atan2(sy - ey, sx - ex)) * 180.0 / pi
         for i, (x, y, size_ratio) in enumerate(path):
             self._active_i = i
-            target_size = (int(start_width * size_ratio), int(start_height * size_ratio))
-            self._sprite = pygame.transform.scale(self._orig_sprite, target_size)
+            #target_size = (int(start_width * size_ratio), int(start_height * size_ratio))
+            self._sprite = pygame.transform.rotozoom(self._orig_sprite, angle, size_ratio)
             self._rect = self._sprite.get_rect()
             self.set_pos(x, y)
             yield 'movement'

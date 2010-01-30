@@ -18,6 +18,7 @@ size = width, height = 1024, 768 # screen size
 
 # mechanics
 pigeon_steps_per_half_path = 24
+steps_to_shoot = 10 # time after shot ended until next shot can be fired
 
 # game points
 car_hits_to_kill = 5

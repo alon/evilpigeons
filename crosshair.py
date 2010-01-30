@@ -17,7 +17,7 @@ class Crosshair(SpriteWorld):
 
     def __init__(self, world):
         super(Crosshair, self).__init__(world=world, location=(0,0), filename='crosshair.png')
-        self._can_shoot = True
+        self._steps_to_shoot = 0
         self._broom = Broom()
         self._broom_exit_point = self._broom._rect.center # will be replaced when mouse is moved first
         self._action = self.do_follow_mouse()
@@ -29,24 +29,26 @@ class Crosshair(SpriteWorld):
             cx, cy = self._rect.center
             rx, ry = self._broom._rect.center
             direction = math.atan2(cy - ry, cx - rx)
-            self._broom.rotate(-direction-0.5)
-            self._broom_exit_point = edge_of_circle(self._broom._rect.center, angle=direction, r=150)
+            self._broom.rotate(-direction - 0.6)
+            self._broom_exit_point = edge_of_circle(self._broom._rect.center, angle=direction, r=170)
             # hide crosshair if it is over a pigeon
             if any([not p._state == 'diving' and p._rect.collidepoint(self._rect.center) for p in pigeons]):
                 self.hide()
             else:
                 self.show()
+            if self._steps_to_shoot > 0:
+                self._steps_to_shoot -= 1
             yield x
 
     def shoot(self):
-        if not self._can_shoot: return
+        if self._steps_to_shoot > 0: return
         # make bullet appearance point look 3d, coming from behind
-        self._can_shoot = False
+        self._steps_to_shoot = g.steps_to_shoot
         x, y = pygame.mouse.get_pos()
         self.general_shoot(projectile_class=Bullet, location=self._broom_exit_point, target=(x, y), done_callback=self._enable_shots)
 
     def _enable_shots(self):
-        self._can_shoot = True
+        self._steps_to_shoot = g.steps_to_shoot
 
 class Bullet(Projectile):
 
