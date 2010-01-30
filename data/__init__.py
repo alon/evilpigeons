@@ -16,3 +16,4 @@ def get_sprite(filename):
         sprites[filename] = pygame.image.load(path)
         print "loaded %s from %s" % (sprites[filename], path)
     return sprites[filename]
+

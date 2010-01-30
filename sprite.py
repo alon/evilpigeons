@@ -28,11 +28,17 @@ class Sprite(object):
 
     # Sprite helpers
     def set_sprite(self, sprite):
+        """ sets current sprite but keeps self._orig_sprite as is """
         #print "setting to %s" % str(sprite)
         center = self._rect.center
         self._sprite = sprite
         self._rect = self._sprite.get_rect()
         self._rect.center = center
+
+    def replace_sprite(self, sprite):
+        """ set_sprite, but also change self._orig_sprite """
+        self.set_sprite(sprite)
+        self._orig_sprite = sprite
 
     def scale(self, factor):
         center = self._rect.center

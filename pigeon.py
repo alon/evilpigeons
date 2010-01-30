@@ -66,7 +66,7 @@ class PigeonController(object):
 
     def try_dive(self, i):
         # only one can dive at a time
-        if any([p.isdiving() for p in self._pigeons]):
+        if any([not p.isdead() and p.isdiving() for p in self._pigeons]):
             return
         self._pigeons[i].start_dive()
 
@@ -84,6 +84,8 @@ class Pigeon(SpriteWorld):
 
     def __init__(self, controller, location, key, dive_path, return_path):
         SpriteWorld.__init__(self, world=controller._world, location=location, filename='pigeon_sit.png')
+        if self._rect.center[0] < g.width / 2:
+            self.replace_sprite(pygame.transform.flip(self._sprite, True, False))
         self._controller = controller
         self._key = key
         self._dive_path = dive_path # predetermined path (later - generated?)
@@ -124,7 +126,7 @@ class Pigeon(SpriteWorld):
         channel = g.sounds['pigeon_flap'].play()
         self._action = self.do_end(
             self.do_animate([(x, 0) for x in sprites]*3),
-            end=lambda: channel.stop())
+            end=lambda channel=channel: channel.stop())
 
     # die
     def onhit(self, hitter):

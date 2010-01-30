@@ -77,10 +77,10 @@ class World(EventHandler):
 
     # End game
     def car_is_dead_long_live_the_pigeons(self):
-        splash(pygame.display.get_surface(), 'pigeon_win_splash.png')
+        splash(pygame.display.get_surface(), 'pigeon_win_splash.png', min_timeout=1.0)
         self._restart()
 
     def pigeons_dead_long_live_the_car(self):
-        splash(pygame.display.get_surface(), 'car_win_splash.png')
+        splash(pygame.display.get_surface(), 'car_win_splash.png', min_timeout=1.0)
         self._restart()
 
