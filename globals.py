@@ -20,7 +20,7 @@ size = width, height = 1024, 768 # screen size
 pigeon_steps_per_half_path = 30
 
 # game points
-car_hits_to_kill = 2
+car_hits_to_kill = 4
 
 # colors
 black = 0, 0, 0
@@ -33,7 +33,9 @@ def load_sounds():
     for key, filename in [
             ('shot', '44MAG.wav'),
             ('pigeon_hit', 'pigeon_hit.wav'),
-            ('shit_splat', 'shit_splat.wav')
+            ('shit_splat', 'shit_splat.wav'),
+            ('pigeon_background', 'pigeon_background.wav'),
+            ('pigeon_flap', 'pigeon_flap.wav')
             ]:
         filepath = os.path.join('data', 'sound', filename)
         if not os.path.exists(filepath):

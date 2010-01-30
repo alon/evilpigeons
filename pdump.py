@@ -64,7 +64,7 @@ def main(argv):
     # Start game
     EventHandler.active_handlers.add(world) # overly complex..
 
-    background = data.get_sprite('background.jpg')
+    background = data.get_sprite('background.png')
     background_rect = background.get_rect()
 
     if not '--nomusic' in g.argv:
@@ -84,6 +84,8 @@ def main(argv):
     keymap.add(ord(']'), inc_vol)
 
     active_handlers = EventHandler.active_handlers
+
+    world.start_background_sound()
 
     while True:
         # update location of shotgun crosshair

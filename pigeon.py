@@ -108,10 +108,12 @@ class Pigeon(SpriteWorld):
     def start_dive(self):
         if self.isdead(): return
         self._state = 'diving'
-        self._action = itertools.chain(
+        channel = g.sounds['pigeon_flap'].play()
+        self._action = self.do_end(itertools.chain(
             self.do_path(self._dive_path, sprite_iter = self._flap_sprite_iter),
             self.do_f(self.defecate),
-            self.do_path(self._return_path, sprite_iter = self._flap_sprite_iter))
+            self.do_path(self._return_path, sprite_iter = self._flap_sprite_iter)),
+            end=lambda: (self.set_sprite(self._orig_sprite), channel.stop()))
 
     def diversion_flap(self):
         self._state = 'diversion_flap'

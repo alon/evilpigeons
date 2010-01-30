@@ -17,6 +17,8 @@ class Sprite(object):
         self.set_pos(*self._start_location)
         self._state = None
         self._action = self.do_nothing()
+        self._active_path = None # do_path uses this, and do_path_size
+        self._active_i = 0
 
     def set_pos(self, x, y):
         self._rect.center = x, y
@@ -26,8 +28,11 @@ class Sprite(object):
 
     # Sprite helpers
     def set_sprite(self, sprite):
+        print "setting to %s" % str(sprite)
+        center = self._rect.center
         self._sprite = sprite
         self._rect = self._sprite.get_rect()
+        self._rect.center = center
 
     def scale(self, factor):
         center = self._rect.center
@@ -62,24 +67,30 @@ class Sprite(object):
 
     # Some default actions
     def do_path(self, path, sprite_iter = None):
+        def iter_current_orig_sprite():
+            while True:
+                print "BLA %s" % str(self._orig_sprite)
+                yield self._orig_sprite
         if sprite_iter == None:
-            sprite_iter = itertools.repeat(self._sprite)
+            sprite_iter = iter_current_orig_sprite()
         last_x = self._rect.center[0]
         for (x, y), sprite in zip(path, sprite_iter):
             # turn sprite to the right direction. We assume the images are always facing left
             if x > last_x:
-                print "flipped"
+                #print "flipped"
                 sprite = pygame.transform.flip(sprite, True, False) # flip_x, flip_y
             self.set_sprite(sprite)
             self.set_pos(x, y)
             yield 'movement'
 
     def do_path_with_size(self, path):
-        start_sprite = self._sprite
+        self._active_path = path
+        self._active_i = 0
         start_size = start_width, start_height = self._rect.size
-        for x, y, size_ratio in path:
+        for i, (x, y, size_ratio) in enumerate(path):
+            self._active_i = i
             target_size = (int(start_width * size_ratio), int(start_height * size_ratio))
-            self._sprite = pygame.transform.scale(start_sprite, target_size)
+            self._sprite = pygame.transform.scale(self._orig_sprite, target_size)
             self._rect = self._sprite.get_rect()
             self.set_pos(x, y)
             yield 'movement'
@@ -117,6 +128,11 @@ class Sprite(object):
     def do_f(self, f):
         yield f()
 
+    def do_end(self, gen, end):
+        for x in gen:
+            yield x
+        end()
+
     def do_nothing(self):
         self._state = 'nothing'
         while True:
@@ -139,7 +155,7 @@ class SpriteWorld(Sprite):
 class Projectile(Sprite):
 
     def __init__(self, location, target, filename, final_size_ratio = 1.0, shoot_sound = None, end_sound = None,
-            done_callback=lambda: None):
+            done_callback=lambda: None, eternal=False):
         super(Projectile, self).__init__(location = location, filename = filename)
         self._target = target
         self._projectile_path = interpolate(10, list(self._start_location)+[1.0], list(self._target) + [final_size_ratio])
@@ -149,7 +165,8 @@ class Projectile(Sprite):
             for x in self.do_path_with_size(self._projectile_path): yield x
             if end_sound: end_sound.play()
             done_callback()
-            for x in self.do_quit(): yield x
+            if not eternal:
+                for x in self.do_quit(): yield x
         if shoot_sound: shoot_sound.play()
         self._action = action_gen()
  

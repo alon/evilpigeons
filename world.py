@@ -13,6 +13,7 @@ class World(EventHandler):
 
     def __init__(self):
         super(World, self).__init__()
+        self._background_channel = g.sounds['pigeon_background']
         self._restart()
 
     def _restart(self):
@@ -27,6 +28,12 @@ class World(EventHandler):
         else:
             self.add_just_simulated_sprite(car)
         print "keys = %s" % len(self._keymap)
+
+    def start_background_sound(self):
+        self._background_channel.play(-1)
+
+    def stop_background_sound(self):
+        self._background_channel.stop()
 
     def on_mouse_down(self):
         self._crosshair.shoot()
@@ -58,8 +65,11 @@ class World(EventHandler):
                 dest.onhit(src) # / this makes it easier to implement - just define onhit where it matters
                 # NOTE: it will only die in the next loop - not that bad..
         # Delete finished projectiles / pigeons
-        for i in reversed(sorted(removed)):
-            del self._sprites[i]
+        for i in sorted(set(removed), reverse=True):
+            try:
+                del self._sprites[i]
+            except:
+                print "cannot delete sprite %s, have %s sprites left" % (i, len(self._sprites))
 
     def blit(self, screen):
         for s in self._sprites:
@@ -73,5 +83,4 @@ class World(EventHandler):
     def pigeons_dead_long_live_the_car(self):
         splash(pygame.display.get_surface(), 'car_win_splash.png')
         self._restart()
-
 
