@@ -24,12 +24,18 @@ class Crosshair(SpriteWorld):
         self._world.add_sprite(self._broom)
 
     def do_follow_mouse(self):
+        pigeons = self._world._pcontroller._pigeons
         for x in super(Crosshair, self).do_follow_mouse():
             cx, cy = self._rect.center
             rx, ry = self._broom._rect.center
             direction = math.atan2(cy - ry, cx - rx)
             self._broom.rotate(-direction-0.5)
             self._broom_exit_point = edge_of_circle(self._broom._rect.center, angle=direction, r=150)
+            # hide crosshair if it is over a pigeon
+            if any([p._rect.collidepoint(self._rect.center) for p in pigeons]):
+                self.hide()
+            else:
+                self.show()
             yield x
 
     def shoot(self):

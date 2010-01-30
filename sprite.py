@@ -19,7 +19,17 @@ class Sprite(object):
         self._action = self.do_nothing()
         self._active_path = None # do_path uses this, and do_path_size
         self._active_i = 0
+        self._visible = True
 
+    def visible(self):
+        return self._visible
+
+    def hide(self):
+        self._visible = False
+
+    def show(self):
+        self._visible = True
+    
     def set_pos(self, x, y):
         self._rect.center = x, y
 

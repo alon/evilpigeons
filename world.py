@@ -73,7 +73,8 @@ class World(EventHandler):
 
     def blit(self, screen):
         for s in self._sprites:
-            screen.blit(s._sprite, s._rect)
+            if s.visible():
+                screen.blit(s._sprite, s._rect)
 
     # End game
     def car_is_dead_long_live_the_pigeons(self):
