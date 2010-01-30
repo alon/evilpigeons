@@ -13,7 +13,6 @@ def get_sprite(filename):
     if filename not in sprites:
         if not os.path.exists(path):
             path = os.path.join('data', 'images', filename)
-        print "loading %s" % path
         sprites[filename] = pygame.image.load(path)
-    print sprites[filename]
+        print "loaded %s from %s" % (sprites[filename], path)
     return sprites[filename]

@@ -1,4 +1,7 @@
 import json
+import sys
+
+argv = sys.argv # to be program options..
 
 ################################################################################
 # Simple Global Constants
@@ -10,6 +13,10 @@ size = width, height = 1024, 768 # screen size
 
 # game points
 car_hits_to_kill = 2
+
+# colors
+black = 0, 0, 0
+white = 255, 255, 255
 
 ################################################################################
 # Utilities
