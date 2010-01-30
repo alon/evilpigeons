@@ -12,6 +12,17 @@ def iter_key_events():
             elif event.type == KEYDOWN:
                 yield event.key, event.mod
 
+def iter_all_events():
+    """ all means mouse and keyboard """
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            elif event.type == KEYDOWN:
+                yield event.key, event.mod
+            elif event.type == MOUSEBUTTONDOWN:
+                yield event
+
 def splash(screen, filename, min_timeout=0.0):
     print "splash %s" % filename
     help_sprite = data.get_sprite(filename)
@@ -19,7 +30,7 @@ def splash(screen, filename, min_timeout=0.0):
     screen.blit(help_sprite, help_rect)
     pygame.display.flip()
     start = time.time()
-    for key, mod in iter_key_events():
+    for event in iter_all_events():
         if time.time() - start >= min_timeout:
             break
 
