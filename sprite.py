@@ -80,7 +80,7 @@ class Sprite(object):
         while True:
             yield 'nothing'
 
-    def onhit(self, dest):
+    def onhit(self, hitter):
         """ default onhit - reimplement """
         pass
 

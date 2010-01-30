@@ -17,6 +17,7 @@ from pygame.locals import *
 from pigeon import Pigeon
 from sprite import Sprite
 from crosshair import Crosshair
+from car import Car
 import globals as g
 import mathutil
 import data
@@ -75,9 +76,21 @@ class World(object):
 
     def __init__(self, sprites):
         self._sprites = sprites
+        self._just_simulated = []
 
     def add_sprite(self, sprite):
         self._sprites.append(sprite)
+
+    def add_just_simulated_sprite(self, sprite):
+        self._just_simulated.append(sprite)
+
+    def simulated_pairs(self):
+        all = self._sprites + self._just_simulated
+        n = len(all)
+        for i_src, src in enumerate(all):
+            for i_dest in xrange(i_src + 1, n):
+                dest = all[i_dest]
+                yield src, dest
 
     def simulate(self):
         """ core interactions - simulate everything, collide everything, O(n^2) """
@@ -86,13 +99,11 @@ class World(object):
             if s.simulate() == 'killme':
                 removed.append(i)
         # Check for collision, kill collided stuff
-        for i_src in xrange(len(self._sprites)):
-            for i_dest in xrange(i_src, len(self._sprites)):
-                src, dest = self._sprites[i_src], self._sprites[i_dest]
-                if src._rect.colliderect(dest._rect):
-                    src.onhit(dest) # \
-                    dest.onhit(src) # / this makes it easier to implement - just define onhit where it matters
-                    # NOTE: it will only die in the next loop - not that bad..
+        for src, dest in self.simulated_pairs():
+            if src._rect.colliderect(dest._rect):
+                src.onhit(dest) # \
+                dest.onhit(src) # / this makes it easier to implement - just define onhit where it matters
+                # NOTE: it will only die in the next loop - not that bad..
         # Delete finished projectiles / pigeons
         for i in reversed(sorted(removed)):
             del self._sprites[i]
@@ -101,18 +112,39 @@ class World(object):
         for s in self._sprites:
             screen.blit(s._sprite, s._rect)
 
+    # End game
+    def car_is_dead_long_live_the_pigeons(self):
+        print "EVIL RULES"
+
 class KeyMap(object):
 
-    def __init__(self):
-        self._map = defaultdict(list)
+    IGNORE_MOD = -1
 
-    def add(self, key, func, mod = 0):
-        self._map[key].append((mod, func))
+    def __init__(self):
+        self._map = {}
+
+    def add(self, key, func, mod = IGNORE_MOD):
+        if key not in self._map:
+            self._map[key] = [(mod, func)]
+        else:
+            existing = self._map[key]
+            at_i = len(existing) # default - put at the end
+            # keep it sorted: most strict first
+            if mod == self.IGNORE_MOD:
+                at_i = 0
+            elif mod == 0:
+                # put after IGNORE_MOD
+                at_i = 0
+                for i, (e_mod, e_func) in enumerate(existing):
+                    if e_mod == self.IGNORE_MOD:
+                        at_i = i + 1
+            existing.insert(at_i, (mod, func))
+        print 'key %s -> %s' % (key, self._map[key])
 
     def onkey(self, key, mod):
         if key in self._map:
             for f_mod, func in self._map[key]:
-                if (not mod and not f_mod) or (mod & f_mod):
+                if f_mod == self.IGNORE_MOD or (not mod and not f_mod) or (mod & f_mod):
                     return func() # takes the first
         return None
 
@@ -133,6 +165,11 @@ keymap.add(pygame.K_ESCAPE, quit, mod=4096) # windows has mod == 4096, linux has
 world = World([])
 pigeons = [Pigeon(world=world, **d) for d in pigeons_data]
 pcontroller = PigeonController(pigeons=pigeons, keymap=keymap)
+car = Car(world)
+if '--showcar' in sys.argv:
+    world.add_sprite(car)
+else:
+    world.add_just_simulated_sprite(car)
 for p in pigeons:
     world.add_sprite(p)
 

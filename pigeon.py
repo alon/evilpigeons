@@ -42,8 +42,8 @@ class Pigeon(SpriteWorld):
         self._action = self.do_animate(self._flap_sprites)
 
     # die
-    def onhit(self, dest):
+    def onhit(self, hitter):
         from crosshair import Bullet
-        if dest.__class__ == Bullet and self.is_unprotected_from_hit():
-            self.killed(dest)
+        if hitter.__class__ == Bullet and self.is_unprotected_from_hit():
+            self.killed(killer=hitter)
 
