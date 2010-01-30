@@ -68,6 +68,7 @@ def main(argv):
         help_sprite = data.get_sprite(help_screen)
         help_rect = help_sprite.get_rect()
         screen.blit(help_sprite, help_rect)
+        pygame.display.flip()
         for key, mod in iter_key_events():
             break
 
