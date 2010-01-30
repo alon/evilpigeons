@@ -3,11 +3,14 @@ import itertools
 import pygame
 
 from mathutil import interpolate
+import data
 
 class Sprite(object):
     def __init__(self, location, filename):
         self._start_location = location
-        self._sprite = pygame.image.load(filename)
+        self._sprite = data.get_sprite(filename)
+        if self._sprite is None:
+            import pdb; pdb.set_trace()
         self._rect = self._sprite.get_rect()
         self.set_pos(*self._start_location)
         self._state = None

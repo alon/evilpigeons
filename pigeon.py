@@ -4,6 +4,7 @@ import pygame
 
 from sprite import SpriteWorld
 from shit import Shit
+import data
 import globals as g
 
 class Pigeon(SpriteWorld):
@@ -16,7 +17,7 @@ class Pigeon(SpriteWorld):
         self._target = (int(g.width*0.5), int(g.height*0.5))
         flap_steps = 3
         d = flap_delay_steps = 2
-        flap_sprite = pygame.image.load('pigeon_flap.png')
+        flap_sprite = data.get_sprite('pigeon_flap.png')
         a, b = flap_sprite, self._sprite
         self._flap_sprites = sum([[(a, d), (b, d)] for i in xrange(flap_steps)], []) + [(self._sprite, 0)]
 

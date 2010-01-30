@@ -19,6 +19,7 @@ from sprite import Sprite
 from crosshair import Crosshair
 import globals as g
 import mathutil
+import data
 
 # Constants
 black = 0, 0, 0
@@ -160,7 +161,7 @@ if '--setpos' in sys.argv:
 
 def main(argv):
     screen = pygame.display.set_mode(g.size)
-    background = pygame.image.load('background.jpg')
+    background = data.get_sprite('background.jpg')
     background_rect = background.get_rect()
     crosshair = Crosshair(world)
     world.add_sprite(crosshair)
