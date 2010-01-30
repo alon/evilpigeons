@@ -20,11 +20,15 @@ size = width, height = 1024, 768 # screen size
 pigeon_steps_per_half_path = 24
 
 # game points
-car_hits_to_kill = 4
+car_hits_to_kill = 5
+start_car_value = 5000
+assert(start_car_value % car_hits_to_kill == 0)
+car_value_reduction = start_car_value / car_hits_to_kill
 
 # colors
 black = 0, 0, 0
 white = 255, 255, 255
+yellow = 255, 255, 0
 
 sounds = {}
 def load_sounds():

@@ -26,7 +26,6 @@ class Shit(Projectile):
         print "BRRRR"
         rest_of_path = self._active_path[self._active_i:random.choice(range(self._active_i, len(self._active_path)))]
         self._action = self.do_end(self.do_path_with_size(rest_of_path), end=set_orig)
-            
 
     def null_onhit(self, dest):
         pass

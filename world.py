@@ -13,11 +13,27 @@ class World(EventHandler):
 
     def __init__(self):
         super(World, self).__init__()
+        self._font = pygame.font.Font(None, 48)
         self._background_channel = g.sounds['pigeon_background']
         self._background_channel.set_volume(0.8)
         self._restart()
 
+    def set_car_value(self, v):
+        self._car_value = v
+
+    def get_car_value(self):
+        return self._car_value
+
+    car_value = property(get_car_value, set_car_value)
+
+    def update_car_value(self, car_value):
+        print "car value = %s" % car_value
+        self.car_value = car_value
+        self._car_value_text = self._font.render("%s$" % (self._car_value), 1, g.yellow)
+        self._car_value_rect = self._car_value_text.get_rect(centerx=g.width*9/10, centery = g.height*9/10)
+
     def _restart(self):
+        self.update_car_value(g.start_car_value)
         self._sprites = []
         self._just_simulated = []
         self._pcontroller = PigeonController(world=self, keymap=self._keymap)
@@ -76,6 +92,8 @@ class World(EventHandler):
         for s in self._sprites:
             if s.visible():
                 screen.blit(s._sprite, s._rect)
+        # show car_value
+        screen.blit(self._car_value_text, self._car_value_rect)
 
     # End game
     def car_is_dead_long_live_the_pigeons(self):

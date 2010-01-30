@@ -21,6 +21,7 @@ class Car(SpriteWorld):
         if hitter.__class__ == self._kill_class:
             self._hits_allowed -= 1
             print "Car Hit - left = %s" % self._hits_allowed
+            self._world.update_car_value(self._world._car_value - g.car_value_reduction) # should be kept in car
         if self._hits_allowed <= 0:
             self._world.car_is_dead_long_live_the_pigeons()
 
