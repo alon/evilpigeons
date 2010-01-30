@@ -4,7 +4,6 @@ import pygame
 
 from sprite import SpriteWorld
 from shit import Shit
-
 import globals as g
 
 class Pigeon(SpriteWorld):
@@ -28,4 +27,10 @@ class Pigeon(SpriteWorld):
             self.do_path(self._dive_path),
             self.do_f(self.defecate),
             self.do_path(self._return_path))
+
+    # die
+    def onhit(self, dest):
+        from crosshair import Bullet
+        if dest.__class__ == Bullet:
+            self.killed(dest)
 

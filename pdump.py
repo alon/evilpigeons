@@ -72,12 +72,24 @@ class World(object):
     def add_sprite(self, sprite):
         self._sprites.append(sprite)
 
+
+
     def simulate(self):
         removed = []
         for i, s in enumerate(self._sprites):
             if s.simulate() == 'killme':
                 removed.append(i)
-        for i in reversed(removed):
+        # Check for collision, kill collided stuff
+        # O(n^2)..
+        for i_src in xrange(len(self._sprites)):
+            for i_dest in xrange(i_src, len(self._sprites)):
+                src, dest = self._sprites[i_src], self._sprites[i_dest]
+                if src._rect.colliderect(dest._rect):
+                    src.onhit(dest) # \
+                    dest.onhit(src) # / this makes it easier to implement - just define onhit where it matters
+                    # NOTE: it will only die in the next loop - not that bad..
+        # Delete finished projectiles / pigeons
+        for i in reversed(sorted(removed)):
             del self._sprites[i]
 
     def blit(self, screen):
@@ -134,7 +146,7 @@ if '--setpos' in sys.argv:
 def quit():
     print "Quitting.."
     sys.exit()
-keymap.add(pygame.K_ESCAPE, quit)
+keymap.add(pygame.K_ESCAPE, quit, 2**32 - 1) # windows has mod == 4096, linux has mod == 0. 2**32 - 1 should catch all
 for p in pigeons:
     world.add_sprite(p)
 

@@ -41,6 +41,22 @@ class Sprite(object):
             self.set_pos(x, y)
             yield 'movement'
 
+    def do_path_with_size(self, path):
+        start_sprite = self._sprite
+        start_size = start_width, start_height = self._rect.size
+        for x, y, size_ratio in path:
+            target_size = (int(start_width * size_ratio), int(start_height * size_ratio))
+            self._sprite = pygame.transform.scale(start_sprite, target_size)
+            self._rect = self._sprite.get_rect()
+            self.set_pos(x, y)
+            yield 'movement'
+        self._rect.size = start_size
+
+    def killed(self, killer):
+        print "%s was killed by %s" % (self, killer)
+        self._state = 'dying'
+        self._action = self.do_quit()
+
     def do_quit(self):
         # yield the special "killme" code for pdump.World
         yield 'killme'
@@ -53,21 +69,27 @@ class Sprite(object):
         while True:
             yield 'nothing'
 
+    def onhit(self, dest):
+        """ default onhit - reimplement """
+        pass
+
 class SpriteWorld(Sprite):
 
     def __init__(self, world, location, filename):
         super(SpriteWorld, self).__init__(location=location, filename=filename)
         self._world = world
     
-    def general_shoot(self, projectile_class, location, target):
-        self._world.add_sprite(projectile_class(location=location, target=target))
+    def general_shoot(self, projectile_class, location, target, **dict):
+        """ dict is passed to the projectile_class, for final_size_ratio for example """
+        self._world.add_sprite(projectile_class(location=location, target=target, **dict))
 
 class Projectile(Sprite):
-    def __init__(self, location, target, filename):
+
+    def __init__(self, location, target, filename, final_size_ratio = 1.0):
         super(Projectile, self).__init__(location = location, filename = filename)
         self._target = target
-        self._projectile_path = interpolate(10, self._start_location, self._target)
+        self._projectile_path = interpolate(10, list(self._start_location)+[1.0], list(self._target) + [final_size_ratio])
         self._action = itertools.chain(
-            self.do_path(self._projectile_path),
+            self.do_path_with_size(self._projectile_path),
             self.do_quit())
  
