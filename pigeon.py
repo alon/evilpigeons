@@ -16,6 +16,10 @@ def num_to_numkey(num):
         raise Exception("No numkey for num %s" % num)
     return [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_0][num]
 
+def second_key(num):
+    """ for editing paths, a second key for each pegion """
+    return map(ord, 'qwertyuiop')[num]
+
 ################################################################################
 # Pigeon controller
 
@@ -32,13 +36,15 @@ class PigeonController(object):
 
     def _create_pigeons(self):
         pigeons_data = []
-        pigeons_start_positions = g.config['pigeons_start_positions']
+        pigeons_path_key_points = g.config.pigeons_path_key_points
         steps = g.pigeon_steps_per_half_path
-        for i, (x, y) in enumerate(pigeons_start_positions):
+        for i, path in enumerate(pigeons_path_key_points):
+            print path
+            x, y = path[0]
             key = num_to_numkey(i)
             to_int = lambda points: [(int(_x*g.width), int(_y*g.height)) for _x, _y in points]
-            dive_path = to_int(mathutil.path(n=steps, points=[(x, y), g.config.pigeon_dive_position]))
-            return_path = to_int(mathutil.path(n=steps, points=[g.config.pigeon_dive_position, (x, y)]))
+            dive_path = to_int(mathutil.path(n=steps, points=path))
+            return_path = to_int(mathutil.path(n=steps, points=list(reversed(path))))
             pigeons_data.append(dict(location=(int(x*g.width), int(y*g.height)), key=key,
                                      dive_path=dive_path, return_path=return_path))
         pigeons = [Pigeon(world=self._world, **d) for d in pigeons_data]
@@ -50,12 +56,12 @@ class PigeonController(object):
             keymap.add(p._key, lambda i=i: self.try_diversion_flap(i), mod=pygame.KMOD_SHIFT)
         # XXX: should we have to do this every time we restart the game?
         if '--setpos' in g.argv:
-            pos_recorder = g.PosRecorder()
+            pos_recorder = g.PosRecorder(self._world)
             for i in xrange(len(self._pigeons)):
+                keymap.add(second_key(i), lambda i=i: pos_recorder.reset_bird_path(i))
                 keymap.add(num_to_numkey(i), lambda i=i: pos_recorder.set_bird_pos(i), pygame.KMOD_CTRL)
             keymap.add(ord('c'), pos_recorder.set_car_pos)
-            keymap.add(ord('r'), pos_recorder.record_poses)
-
+            keymap.add(ord('s'), pos_recorder.record_poses)
 
     def try_dive(self, i):
         # only one can dive at a time

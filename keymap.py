@@ -24,10 +24,10 @@ class KeyMap(object):
                 return
             self._map_mod_set[key].add(mod)
             print "adding %s, %s, %s" % (key, func, mod)
-            at_i = len(existing) # default - put at the end
+            at_i = 0 # default - put at the end
             # keep it sorted: most strict first
             if mod == self.IGNORE_MOD:
-                at_i = 0
+                at_i = len(existing)
             elif mod == 0:
                 # put after IGNORE_MOD
                 at_i = 0

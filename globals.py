@@ -2,6 +2,10 @@ import json
 import sys
 import os
 
+import pygame
+
+from sprite import Sprite
+
 argv = sys.argv # to be program options..
 
 ################################################################################
@@ -46,16 +50,18 @@ def unit_pos_to_screen_pos(x, y):
 ################################################################################
 # Updatable configuration (when using --setpos)
 
-PIGEONS_START_POSITIONS = 'pigeons_start_positions'
+PIGEONS_PATH_KEY_POINTS = 'pigeons_path_key_points'
 CAR_START_POSITION = 'car_start_position'
-PIGEON_START_POSITION = 'pigeon_start_position'
 
 class Config(object):
 
     FILENAME = 'data/config.json'
-    DEFAULT = {PIGEONS_START_POSITIONS : [(0.1, 0.1), (0.3, 0.1), (0.7, 0.1), (0.9, 0.1)],
-        CAR_START_POSITION : (0.5, 0.8),
-        PIGEON_START_POSITION : (0.5, 0.5)}
+    DEFAULT = {PIGEONS_PATH_KEY_POINTS : [[(0.1, 0.1), (0.5, 0.5)],
+        [(0.3, 0.1), (0.5, 0.5)],
+        [(0.7, 0.1), (0.5, 0.5)],
+        [(0.9, 0.1), (0.5, 0.5)]],
+        CAR_START_POSITION : (0.5, 0.8)
+        }
 
     def __init__(self):
         # Initial data - pigeons location, target (car) location, anything
@@ -94,33 +100,54 @@ class Config(object):
     def get_car_start_position(self):
         return self[CAR_START_POSITION]
 
-    def get_pigeon_dive_position(self):
-        return self[PIGEON_START_POSITION]
+    def get_pigeons_path_key_points(self):
+        return self[PIGEONS_PATH_KEY_POINTS]
 
     car_start_position = property(get_car_start_position)
-    pigeon_dive_position = property(get_pigeon_dive_position)
+    pigeons_path_key_points = property(get_pigeons_path_key_points)
 
 config = Config()
 
 class PosRecorder(object):
-    def __init__(self):
+
+    def __init__(self, world):
         self.num = 0
-        self._positions = config[PIGEONS_START_POSITIONS]
+        self._world = world
+        self._pigeons_path_key_points = config[PIGEONS_PATH_KEY_POINTS]
         self._car = config[CAR_START_POSITION]
+        self._path_sprites = [
+            [Sprite(location=unit_pos_to_screen_pos(*point), filename='ball.png') for point in path]
+                for path in self._pigeons_path_key_points]
+        for pigeon_path_sprites in self._path_sprites:
+            for sprite in pigeon_path_sprites:
+                world.add_sprite(sprite)
+        self._path_nums = [0]*len(self._pigeons_path_key_points)
+
+    def reset_bird_path(self, num):
+        print "reset path of %s (removing %s sprites)" % (num, len(self._path_sprites[num]))
+        self._path_nums[num] = 0
+        for sprite in self._path_sprites[num]:
+            sprite.killed(None)
+        self._path_sprites[num] = []
 
     def set_bird_pos(self, num):
-        pos = pygame.mouse.get_pos()
-        self._positions[num] = g.screen_pos_to_unit_pos(pos[0], pos[1])
-        pigeons[num].set_pos(*pos)
-        print "setting bird %s to pos %s (%s)" % (num, pos, self._positions[num])
+        current_path = self._pigeons_path_key_points[num]
+        print "bird %s: current points %s" % (num, len(current_path))
+        screen_pos = pygame.mouse.get_pos()
+        unit_pos = screen_pos_to_unit_pos(*screen_pos)
+        current_path.append(unit_pos)
+        self._path_sprites[num].append(Sprite(location=screen_pos, filename='ball.png'))
+        self._world.add_sprite(self._path_sprites[num][-1])
+        print "bird %s path is %s" % (num, self._pigeons_path_key_points[num])
 
     def set_car_pos(self):
         pos = pygame.mouse.get_pos()
-        self._car = g.screen_pos_to_unit_pos(pos[0], pos[1])
+        self._car = screen_pos_to_unit_pos(pos[0], pos[1])
+        print "updating car position to %s" % (str(self._car))
 
     def record_poses(self):
         print "Recording pigeons_start_positions.json"
-        config[PIGEONS_START_POSITIONS] = self._positions
+        config[PIGEONS_PATH_KEY_POINTS] = self._pigeons_path_key_points
         config[CAR_START_POSITION] = self._car
         config.save()
 
