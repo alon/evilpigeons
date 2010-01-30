@@ -21,20 +21,13 @@ import globals as g
 from keymap import KeyMap
 from world import World
 from eventhandler import EventHandler
+from pygameutil import splash
 import mathutil
 import data
 
 def quit():
     print "Quitting.."
     sys.exit()
-
-def iter_key_events():
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sys.exit()
-            elif event.type == KEYDOWN:
-                yield event.key, event.mod
 
 def main(argv):
     # Init pygame
@@ -66,13 +59,7 @@ def main(argv):
 
     # Help screens (no menu system)
     for help_screen in ['help1.jpg', 'help2.jpg']:
-        print help_screen
-        help_sprite = data.get_sprite(help_screen)
-        help_rect = help_sprite.get_rect()
-        screen.blit(help_sprite, help_rect)
-        pygame.display.flip()
-        for key, mod in iter_key_events():
-            break
+        splash(screen, filename=help_screen)
 
     # Start game
     EventHandler.active_handlers.add(world) # overly complex..

@@ -1,9 +1,12 @@
 # vim: set fileencoding=UTF-8 :
 
+import pygame
+
 from pigeon import PigeonController
 from car import Car
 from crosshair import Crosshair
 from eventhandler import EventHandler
+from pygameutil import splash
 import globals as g
 
 class World(EventHandler):
@@ -64,11 +67,11 @@ class World(EventHandler):
 
     # End game
     def car_is_dead_long_live_the_pigeons(self):
-        print "EVIL RULES"
+        splash(pygame.display.get_surface(), 'pigeon_win_splash.png')
         self._restart()
 
     def pigeons_dead_long_live_the_car(self):
-        print "やた! car wins"
+        splash(pygame.display.get_surface(), 'car_win_splash.png')
         self._restart()
 
 
