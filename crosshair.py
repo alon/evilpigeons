@@ -7,6 +7,7 @@ class Crosshair(SpriteWorld):
 
     def __init__(self, world):
         super(Crosshair, self).__init__(world=world, location=(0,0), filename='crosshair.png')
+        self._action = self.do_follow_mouse()
 
     def shoot(self):
         # make bullet appearance point look 3d, coming from behind

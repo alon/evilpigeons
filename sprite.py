@@ -55,6 +55,11 @@ class Sprite(object):
             yield 'movement'
         self._rect.size = start_size
 
+    def do_follow_mouse(self):
+        while True:
+            self.set_pos_from_mouse_pos()
+            yield 'follow_mouse'
+
     def killed(self, killer):
         print "%s was killed by %s" % (self, killer)
         self._state = 'dying'

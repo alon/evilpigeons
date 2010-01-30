@@ -2,6 +2,7 @@
 
 from pigeon import PigeonController
 from car import Car
+from crosshair import Crosshair
 import globals as g
 
 class World(object):
@@ -15,11 +16,16 @@ class World(object):
         self._just_simulated = []
         self._pcontroller = PigeonController(world=self, keymap=self._keymap)
         car = Car(self)
+        self._crosshair = Crosshair(self)
+        self.add_sprite(self._crosshair)
         if '--showcar' in g.argv:
             self.add_sprite(car)
         else:
             self.add_just_simulated_sprite(car)
         print "keys = %s" % len(self._keymap)
+
+    def on_mouse_down(self):
+        self._crosshair.shoot()
 
     def add_sprite(self, sprite):
         self._sprites.append(sprite)

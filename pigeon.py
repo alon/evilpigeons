@@ -33,11 +33,12 @@ class PigeonController(object):
     def _create_pigeons(self):
         pigeons_data = []
         pigeons_start_positions = g.config['pigeons_start_positions']
+        steps = g.pigeon_steps_per_half_path
         for i, (x, y) in enumerate(pigeons_start_positions):
             key = num_to_numkey(i)
             to_int = lambda points: [(int(_x*g.width), int(_y*g.height)) for _x, _y in points]
-            dive_path = to_int(mathutil.path(n=10, points=[(x, y), g.config.pigeon_dive_position]))
-            return_path = to_int(mathutil.path(n=10, points=[g.config.pigeon_dive_position, (x, y)]))
+            dive_path = to_int(mathutil.path(n=steps, points=[(x, y), g.config.pigeon_dive_position]))
+            return_path = to_int(mathutil.path(n=steps, points=[g.config.pigeon_dive_position, (x, y)]))
             pigeons_data.append(dict(location=(int(x*g.width), int(y*g.height)), key=key,
                                      dive_path=dive_path, return_path=return_path))
         pigeons = [Pigeon(world=self._world, **d) for d in pigeons_data]

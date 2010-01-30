@@ -50,12 +50,9 @@ def main(argv):
     screen = pygame.display.set_mode(g.size)
     background = data.get_sprite('background.jpg')
     background_rect = background.get_rect()
-    crosshair = Crosshair(world)
-    world.add_sprite(crosshair)
 
     while True:
         # update location of shotgun crosshair
-        crosshair.set_pos_from_mouse_pos()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -63,9 +60,9 @@ def main(argv):
                 print event.key, event.mod
                 keymap.onkey(event.key, event.mod)
             elif event.type == MOUSEBUTTONDOWN:
-                crosshair.shoot()
+                world.on_mouse_down()
             elif event.type == MOUSEBUTTONUP:
-                print "mouse up"
+                pass
 
         # Draw
         #screen.fill(white)
