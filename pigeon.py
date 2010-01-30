@@ -33,6 +33,7 @@ class PigeonController(object):
         self._pigeons = pigeons
         self._n = len(pigeons)
         self._setup_keymap(keymap)
+        self._pigeons_hit = 0
 
     def _create_pigeons(self):
         pigeons_data = []
@@ -47,7 +48,7 @@ class PigeonController(object):
             return_path = to_int(mathutil.path(n=steps, points=list(reversed(path))))
             pigeons_data.append(dict(location=(int(x*g.width), int(y*g.height)), key=key,
                                      dive_path=dive_path, return_path=return_path))
-        pigeons = [Pigeon(world=self._world, **d) for d in pigeons_data]
+        pigeons = [Pigeon(controller=self, **d) for d in pigeons_data]
         return pigeons
 
     def _setup_keymap(self, keymap):
@@ -74,11 +75,16 @@ class PigeonController(object):
         if not p.isdiving():
             p.diversion_flap()
 
+    def pigeon_hit(self, pigeon):
+        self._pigeons_hit += 1
+        if self._pigeons_hit == len(self._pigeons):
+            self._world.pigeons_dead_long_live_the_car()
 
 class Pigeon(SpriteWorld):
 
-    def __init__(self, world, location, key, dive_path, return_path):
-        SpriteWorld.__init__(self, world=world, location=location, filename='pigeon_fly.jpg')
+    def __init__(self, controller, location, key, dive_path, return_path):
+        SpriteWorld.__init__(self, world=controller._world, location=location, filename='pigeon_fly.jpg')
+        self._controller = controller
         self._key = key
         self._dive_path = dive_path # predetermined path (later - generated?)
         self._return_path = return_path
@@ -113,5 +119,10 @@ class Pigeon(SpriteWorld):
     def onhit(self, hitter):
         from crosshair import Bullet
         if hitter.__class__ == Bullet and self.is_unprotected_from_hit():
+            print "PIGEON DOWN! PIGEON DOWN!"
+            g.sounds['pigeon_hit'].play()
+            print g.sounds['pigeon_hit'].get_length()
             self.killed(killer=hitter)
+            self._controller.pigeon_hit(self)
+
 

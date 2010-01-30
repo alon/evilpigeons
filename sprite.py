@@ -105,14 +105,15 @@ class SpriteWorld(Sprite):
 
 class Projectile(Sprite):
 
-    def __init__(self, location, target, filename, final_size_ratio = 1.0, shoot_sound = None):
+    def __init__(self, location, target, filename, final_size_ratio = 1.0, shoot_sound = None, end_sound = None):
         super(Projectile, self).__init__(location = location, filename = filename)
         self._target = target
         self._projectile_path = interpolate(10, list(self._start_location)+[1.0], list(self._target) + [final_size_ratio])
         gens = []
         def action_gen():
-            if shoot_sound: shoot_sound.play()
             for x in self.do_path_with_size(self._projectile_path): yield x
+            if end_sound: end_sound.play()
             for x in self.do_quit(): yield x
+        if shoot_sound: shoot_sound.play()
         self._action = action_gen()
  

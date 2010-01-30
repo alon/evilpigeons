@@ -15,6 +15,6 @@ class EventHandler(object):
         self._keymap.onkey(key, mod)
 
     def on_mouse_down(self):
-        print "mouse down - reimplement me %s" % str(self)
+        """mouse down - reimplement me """
 
 

@@ -80,9 +80,8 @@ def main(argv):
 
     if not '--nomusic' in g.argv:
         pygame.mixer.music.load(os.path.join('data', 'music', 'background.ogg'))
-        pygame.mixer.music.play()
+        pygame.mixer.music.play(-1)
 
-    
     active_handlers = EventHandler.active_handlers
 
     while True:

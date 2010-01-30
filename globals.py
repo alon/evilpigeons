@@ -17,7 +17,7 @@ size = width, height = 1024, 768 # screen size
 #size = width, height = 320, 240 # screen size
 
 # mechanics
-pigeon_steps_per_half_path = 20
+pigeon_steps_per_half_path = 30
 
 # game points
 car_hits_to_kill = 2
@@ -30,11 +30,15 @@ sounds = {}
 def load_sounds():
     global sounds
     import pygame
-    for key, filename in [('shot', '44MAG.wav')]:
+    for key, filename in [
+            ('shot', '44MAG.wav'),
+            ('pigeon_hit', 'pigeon_hit.wav'),
+            ('shit_splat', 'shit_splat.wav')
+            ]:
         filepath = os.path.join('data', 'sound', filename)
         if not os.path.exists(filepath):
             print "Missing sound file %s" % filepath
-            raise SystemExit
+            sys.exit(-1)
         sounds[key] = pygame.mixer.Sound(filepath)
         print '%s - %s seconds' % (key, sounds[key].get_length())
 
