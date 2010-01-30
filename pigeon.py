@@ -14,7 +14,7 @@ class Pigeon(SpriteWorld):
         self._key = key
         self._dive_path = dive_path # predetermined path (later - generated?)
         self._return_path = return_path
-        self._target = (int(g.width*0.5), int(g.height*0.5))
+        self._target = g.unit_pos_to_screen_pos(*g.config.car_start_position)
         flap_steps = 3
         d = flap_delay_steps = 2
         flap_sprite = data.get_sprite('pigeon_flap.png')

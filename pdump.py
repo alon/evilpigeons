@@ -7,9 +7,9 @@
 #  Ori
 #  Alon Levy
 
+import os
 import sys
 from collections import defaultdict
-import json
 
 import pygame
 from pygame.locals import *
@@ -31,19 +31,20 @@ def num_to_numkey(num):
     return [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_0][num]
 
 pigeons_data = []
+
 #pigeons_start_positions = [
 #    (0.1, 0.4),
 #    (0.1, 0.8),
 #    (0.9, 0.8),
 #    (0.9, 0.4)
 #]
-PIGEONS_START_POSITIONS_JSON = 'pigeons_start_positions.json'
-pigeons_start_positions = json.load(open(PIGEONS_START_POSITIONS_JSON))
+# Keys for initial
+pigeons_start_positions = g.config['pigeons_start_positions']
 for i, (x, y) in enumerate(pigeons_start_positions):
     key = num_to_numkey(i)
     to_int = lambda points: [(int(_x*g.width), int(_y*g.height)) for _x, _y in points]
-    dive_path = to_int(mathutil.path(n=10, points=[(x, y), (0.5, 0.3)]))
-    return_path = to_int(mathutil.path(n=10, points=[(0.3, 0.5), (x, y)]))
+    dive_path = to_int(mathutil.path(n=10, points=[(x, y), g.config.pigeon_dive_position]))
+    return_path = to_int(mathutil.path(n=10, points=[g.config.pigeon_dive_position, (x, y)]))
     pigeons_data.append(dict(location=(int(x*g.width), int(y*g.height)), key=key,
                              dive_path=dive_path, return_path=return_path))
 
@@ -115,22 +116,6 @@ class KeyMap(object):
                     return func() # takes the first
         return None
 
-class BirdPosRecorder(object):
-    def __init__(self):
-        self.num = 0
-        self._positions = pigeons_start_positions
-
-    def set_bird_pos(self, num):
-        pos = pygame.mouse.get_pos()
-        self._positions[num] = float(pos[0]) / g.width, float(pos[1]) / g.height
-        pigeons[num].set_pos(*pos)
-        print "setting bird %s to pos %s (%s)" % (num, pos, self._positions[num])
-
-    def record_poses(self):
-        print "Recording pigeons_start_positions.json"
-        fd = open(PIGEONS_START_POSITIONS_JSON, 'w+')
-        json.dump(self._positions, fd)
-
 def quit():
     print "Quitting.."
     sys.exit()
@@ -154,10 +139,11 @@ for p in pigeons:
 if '--setpos' in sys.argv:
     print "Use Ctrl-<Num> to set pigeon position to mouse position"
 
-    bird_pos_recorder = BirdPosRecorder()
+    pos_recorder = g.PosRecorder()
     for i in xrange(len(pigeons)):
-        keymap.add(num_to_numkey(i), lambda i=i: bird_pos_recorder.set_bird_pos(i), pygame.KMOD_CTRL)
-    keymap.add(ord('r'), bird_pos_recorder.record_poses)
+        keymap.add(num_to_numkey(i), lambda i=i: pos_recorder.set_bird_pos(i), pygame.KMOD_CTRL)
+    keymap.add(ord('c'), pos_recorder.set_car_pos)
+    keymap.add(ord('r'), pos_recorder.record_poses)
 
 def main(argv):
     screen = pygame.display.set_mode(g.size)
