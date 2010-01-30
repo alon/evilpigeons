@@ -1,5 +1,6 @@
 import json
 import sys
+import os
 
 argv = sys.argv # to be program options..
 
@@ -20,6 +21,18 @@ car_hits_to_kill = 2
 # colors
 black = 0, 0, 0
 white = 255, 255, 255
+
+sounds = {}
+def load_sounds():
+    global sounds
+    import pygame
+    for key, filename in [('shot', '44MAG.wav')]:
+        filepath = os.path.join('data', 'sound', filename)
+        if not os.path.exists(filepath):
+            print "Missing sound file %s" % filepath
+            raise SystemExit
+        sounds[key] = pygame.mixer.Sound(filepath)
+        print '%s - %s seconds' % (key, sounds[key].get_length())
 
 ################################################################################
 # Utilities

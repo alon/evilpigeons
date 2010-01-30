@@ -17,5 +17,5 @@ class Crosshair(SpriteWorld):
 class Bullet(Projectile):
 
     def __init__(self, location, target):
-        super(Bullet, self).__init__(location=location, target=target, filename='bullet.png', final_size_ratio=0.5)
+        super(Bullet, self).__init__(location=location, target=target, filename='bullet.png', final_size_ratio=0.5, shoot_sound=g.sounds['shot'])
 

@@ -30,8 +30,10 @@ def quit():
 def main(argv):
     # Init pygame
     pygame.init()
+    print pygame.mixer.get_init()
     pygame.display.set_caption('Evil Pigeons')
     pygame.mouse.set_visible(0)
+    g.load_sounds() # after mixer init
     clock = pygame.time.Clock()
 
     # Build game parts
@@ -50,6 +52,10 @@ def main(argv):
     screen = pygame.display.set_mode(g.size)
     background = data.get_sprite('background.jpg')
     background_rect = background.get_rect()
+
+    if not '--nomusic' in g.argv:
+        pygame.mixer.music.load('data/music/background.ogg')
+        pygame.mixer.music.play()
 
     while True:
         # update location of shotgun crosshair

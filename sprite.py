@@ -69,6 +69,10 @@ class Sprite(object):
         # yield the special "killme" code for pdump.World
         yield 'killme'
 
+    def do_sound(self, sound):
+        yield 'playing_sound'
+        sound.play()
+
     def do_animate(self, sprites):
         """ animate in place - hopefully the sprites are the same size, but we don't care """
         for sprite, delay_steps in sprites:
@@ -101,11 +105,14 @@ class SpriteWorld(Sprite):
 
 class Projectile(Sprite):
 
-    def __init__(self, location, target, filename, final_size_ratio = 1.0):
+    def __init__(self, location, target, filename, final_size_ratio = 1.0, shoot_sound = None):
         super(Projectile, self).__init__(location = location, filename = filename)
         self._target = target
         self._projectile_path = interpolate(10, list(self._start_location)+[1.0], list(self._target) + [final_size_ratio])
-        self._action = itertools.chain(
-            self.do_path_with_size(self._projectile_path),
-            self.do_quit())
+        gens = []
+        def action_gen():
+            if shoot_sound: shoot_sound.play()
+            for x in self.do_path_with_size(self._projectile_path): yield x
+            for x in self.do_quit(): yield x
+        self._action = action_gen()
  
