@@ -2,22 +2,22 @@ import itertools
 
 import pygame
 
-from sprite import Sprite
+from sprite import SpriteWorld
 from shit import Shit
 
 import globals as g
 
-class Pigeon(Sprite):
+class Pigeon(SpriteWorld):
+
     def __init__(self, world, location, key, dive_path, return_path):
-        Sprite.__init__(self, location=location, filename='pigeon_fly.jpg')
-        self._world = world
+        SpriteWorld.__init__(self, world=world, location=location, filename='pigeon_fly.jpg')
         self._key = key
         self._dive_path = dive_path # predetermined path (later - generated?)
         self._return_path = return_path
         self._target = (int(g.width*0.5), int(g.height*0.5))
 
     def defecate(self):
-        self._world.add_sprite(Shit(location=self._rect.midbottom, target=self._target))
+        self.general_shoot(projectile_class=Shit, location=self._rect.midbottom, target=self._target)
 
     def isdiving(self):
         return self._state == 'diving'

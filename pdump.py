@@ -1,3 +1,12 @@
+# Copyright Evil Pegions team Global Game Jam 2010:
+#  Simon Reisman
+#  Near Privman
+#  Benny?
+#  Flash Guy
+#  Ori #2
+#  Ori
+#  Alon Levy
+
 import sys
 from collections import defaultdict
 import json
@@ -7,6 +16,7 @@ from pygame.locals import *
 
 from pigeon import Pigeon
 from sprite import Sprite
+from crosshair import Crosshair
 import globals as g
 import mathutil
 
@@ -132,7 +142,7 @@ def main(argv):
     screen = pygame.display.set_mode(g.size)
     background = pygame.image.load('background.jpg')
     background_rect = background.get_rect()
-    crosshair = Sprite(location=(0,0), filename='crosshair.png')
+    crosshair = Crosshair(world)
     world.add_sprite(crosshair)
 
     while True:
@@ -145,8 +155,7 @@ def main(argv):
                 print event.key, event.mod
                 keymap.onkey(event.key, event.mod)
             elif event.type == MOUSEBUTTONDOWN:
-                # TODO
-                print "mouse down"
+                crosshair.shoot()
             elif event.type == MOUSEBUTTONUP:
                 print "mouse up"
 

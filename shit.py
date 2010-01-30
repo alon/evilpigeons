@@ -2,15 +2,10 @@ import itertools
 
 import pygame
 
-from sprite import Sprite
+from sprite import Projectile
 from mathutil import interpolate
 
-class Shit(Sprite):
+class Shit(Projectile):
     def __init__(self, location, target):
-        Sprite.__init__(self, location=location, filename='ball.png')
-        self._target = target
-        self._shit_path = interpolate(10, self._start_location, self._target)
-        self._action = itertools.chain(
-            self.do_path(self._shit_path),
-            self.do_quit())
-    
+        super(Shit, self).__init__(location=location, target=target, filename='shit.png')
+

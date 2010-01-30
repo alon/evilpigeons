@@ -1,4 +1,8 @@
+import itertools
+
 import pygame
+
+from mathutil import interpolate
 
 class Sprite(object):
     def __init__(self, location, filename):
@@ -49,3 +53,21 @@ class Sprite(object):
         while True:
             yield 'nothing'
 
+class SpriteWorld(Sprite):
+
+    def __init__(self, world, location, filename):
+        super(SpriteWorld, self).__init__(location=location, filename=filename)
+        self._world = world
+    
+    def general_shoot(self, projectile_class, location, target):
+        self._world.add_sprite(projectile_class(location=location, target=target))
+
+class Projectile(Sprite):
+    def __init__(self, location, target, filename):
+        super(Projectile, self).__init__(location = location, filename = filename)
+        self._target = target
+        self._projectile_path = interpolate(10, self._start_location, self._target)
+        self._action = itertools.chain(
+            self.do_path(self._projectile_path),
+            self.do_quit())
+ 
