@@ -32,7 +32,7 @@ class Crosshair(SpriteWorld):
             self._broom.rotate(-direction-0.5)
             self._broom_exit_point = edge_of_circle(self._broom._rect.center, angle=direction, r=150)
             # hide crosshair if it is over a pigeon
-            if any([p._rect.collidepoint(self._rect.center) for p in pigeons]):
+            if any([not p._state == 'diving' and p._rect.collidepoint(self._rect.center) for p in pigeons]):
                 self.hide()
             else:
                 self.show()

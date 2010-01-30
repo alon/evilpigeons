@@ -79,6 +79,8 @@ class PigeonController(object):
         self._pigeons_hit += 1
         if self._pigeons_hit == len(self._pigeons):
             self._world.pigeons_dead_long_live_the_car()
+        # explode animation
+        #self._action = 
 
 class Pigeon(SpriteWorld):
 
