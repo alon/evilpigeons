@@ -1,6 +1,8 @@
 import itertools
+from math import pi, cos, sin
 
 import pygame
+from numpy import linspace
 
 from sprite import SpriteWorld
 from shit import Shit
@@ -79,8 +81,6 @@ class PigeonController(object):
         self._pigeons_hit += 1
         if self._pigeons_hit == len(self._pigeons):
             self._world.pigeons_dead_long_live_the_car()
-        # explode animation
-        #self._action = 
 
 class Pigeon(SpriteWorld):
 
@@ -109,10 +109,15 @@ class Pigeon(SpriteWorld):
     def is_unprotected_from_hit(self):
         return self.isdiving() # TODO - check if out of perch
 
+    def _start_flap_sound(self):
+        c = g.sounds['pigeon_flap'].play()
+        c.set_volume(2.0) # default 1.0
+        return c
+
     def start_dive(self):
         if self.isdead(): return
         self._state = 'diving'
-        channel = g.sounds['pigeon_flap'].play()
+        channel = self._start_flap_sound()
         self._action = self.do_end(itertools.chain(
             self.do_path(self._dive_path, sprite_iter = self._flap_sprite_iter),
             self.do_f(self.defecate),
@@ -125,7 +130,7 @@ class Pigeon(SpriteWorld):
         if self._rect.center[0] < g.width / 2:
             sprites = [pygame.transform.flip(sprite, True, False) for sprite in sprites]
         sprites.append(self._orig_sprite)
-        channel = g.sounds['pigeon_flap'].play()
+        channel = self._start_flap_sound()
         self._action = self.do_end(
             self.do_animate([(x, 0) for x in sprites]*3),
             end=lambda channel=channel: channel.stop())
@@ -133,11 +138,33 @@ class Pigeon(SpriteWorld):
     # die
     def onhit(self, hitter):
         from crosshair import Bullet
-        if hitter.__class__ == Bullet and self.is_unprotected_from_hit():
-            print "PIGEON DOWN! PIGEON DOWN!"
-            g.sounds['pigeon_hit'].play()
-            print g.sounds['pigeon_hit'].get_length()
+        if not hitter.__class__ == Bullet or not self.is_unprotected_from_hit(): return
+        def explode_animation():
+            # create a bunch of sprites of moving trianagles to outside
+            s = pygame.Surface(size=(500,500))
+            self._rect = rect = s.get_rect()
+            rect.center = self._rect.center
+            m = 100
+            l = 200
+            for r in linspace(100, 300, 5):
+                for angle in [0, pi/2, pi, pi*3/2, 2*pi]:
+                    sa, ca = sin(angle), cos(angle)
+                    pygame.draw.polygon(s, g.black, [
+                        (ca*r, sa*r),
+                        (ca*(r + l) + sa*m, ca*(r + m) + sa*l),
+                        (ca*(r + l) - sa*m, ca*(r - m) - sa*l)])
+                self._orig_sprite = self._sprite = s
+                print "explode"
+                yield 'explode'
+            self.hide()
             self.killed(killer=hitter)
-            self._controller.pigeon_hit(self)
+        # explode animation
+        # TODO: make explosion work
+        #self._action = explode_animation()
+
+        print "PIGEON DOWN! PIGEON DOWN!"
+        g.sounds['pigeon_hit'].play()
+        print g.sounds['pigeon_hit'].get_length()
+        self._controller.pigeon_hit(self)
 
 
