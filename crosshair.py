@@ -54,5 +54,5 @@ class Bullet(Projectile):
 
     def __init__(self, location, target, done_callback):
         super(Bullet, self).__init__(location=location, target=target, filename='bullet.png',
-                final_size_ratio=0.5, shoot_sound=g.sounds['shot'], done_callback=done_callback)
+                final_size_ratio=0.5, shoot_sound=g.sounds['shot'], done_callback=done_callback, rotate=True)
 

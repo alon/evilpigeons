@@ -99,15 +99,17 @@ class Sprite(object):
             self.set_pos(x, y)
             yield 'movement'
 
-    def do_path_with_size(self, path):
+    def do_path_with_size(self, path, rotate=False):
         """ path and change size with path and do rotation according to path direction"""
         self._active_path = path
         self._active_i = 0
         start_size = start_width, start_height = self._rect.size
-        ex, ey, ration = path[-1]
-        sx, sy = self._rect.center
-        # we assume the angle of the projectile is constant, according to start and end points of path
-        angle = (pi - atan2(sy - ey, sx - ex)) * 180.0 / pi
+        angle = 0.0
+        if rotate:
+            ex, ey, ration = path[-1]
+            sx, sy = self._rect.center
+            # we assume the angle of the projectile is constant, according to start and end points of path
+            angle = (pi - atan2(sy - ey, sx - ex)) * 180.0 / pi
         for i, (x, y, size_ratio) in enumerate(path):
             self._active_i = i
             #target_size = (int(start_width * size_ratio), int(start_height * size_ratio))
@@ -176,14 +178,15 @@ class SpriteWorld(Sprite):
 class Projectile(Sprite):
 
     def __init__(self, location, target, filename, final_size_ratio = 1.0, shoot_sound = None, end_sound = None,
-            done_callback=lambda: None, eternal=False):
+            done_callback=lambda: None, eternal=False, rotate=False):
         super(Projectile, self).__init__(location = location, filename = filename)
         self._target = target
+        self._rotate = rotate
         self._projectile_path = interpolate(10, list(self._start_location)+[1.0], list(self._target) + [final_size_ratio])
         gens = []
         print done_callback
         def action_gen():
-            for x in self.do_path_with_size(self._projectile_path): yield x
+            for x in self.do_path_with_size(self._projectile_path, rotate=self._rotate): yield x
             if end_sound: end_sound.play()
             done_callback()
             if not eternal:

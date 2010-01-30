@@ -55,14 +55,14 @@ class PigeonController(object):
 
     def _setup_keymap(self, keymap):
         for i, p in enumerate(self._pigeons):
-            keymap.add(p._key, lambda i=i: self.try_dive(i))
-            keymap.add(p._key, lambda i=i: self.try_diversion_flap(i), mod=pygame.KMOD_SHIFT)
+            keymap.add(p._key, lambda i=i, self=self: self.try_dive(i))
+            keymap.add(p._key, lambda i=i, self=self: self.try_diversion_flap(i), mod=pygame.KMOD_SHIFT)
         # XXX: should we have to do this every time we restart the game?
         if '--setpos' in g.argv:
             pos_recorder = g.PosRecorder(self._world)
             for i in xrange(len(self._pigeons)):
-                keymap.add(second_key(i), lambda i=i: pos_recorder.reset_bird_path(i))
-                keymap.add(num_to_numkey(i), lambda i=i: pos_recorder.set_bird_pos(i), pygame.KMOD_CTRL)
+                keymap.add(second_key(i), lambda i=i, pos_recorder=pos_recorder: pos_recorder.reset_bird_path(i))
+                keymap.add(num_to_numkey(i), lambda i=i, pos_recorder=pos_recorder: pos_recorder.set_bird_pos(i), pygame.KMOD_CTRL)
             keymap.add(ord('c'), pos_recorder.set_car_pos)
             keymap.add(ord('s'), pos_recorder.record_poses)
 
@@ -113,6 +113,9 @@ class Pigeon(SpriteWorld):
 
     def _start_flap_sound(self):
         c = g.sounds['pigeon_flap'].play()
+        if c is None:
+            print "STRANGE BUG #1 - g.sounds['pigeon_flap'].play() returned None"
+            return None
         c.set_volume(2.0) # default 1.0
         return c
 
@@ -124,7 +127,7 @@ class Pigeon(SpriteWorld):
             self.do_path(self._dive_path, sprite_iter = self._flap_sprite_iter),
             self.do_f(self.defecate),
             self.do_path(self._return_path, sprite_iter = self._flap_sprite_iter)),
-            end=lambda: (self.set_sprite(self._orig_sprite), channel.stop()))
+            end=lambda self=self, channel=channel: (self.set_sprite(self._orig_sprite), channel.stop()))
 
     def diversion_flap(self):
         self._state = 'diversion_flap'
