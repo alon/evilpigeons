@@ -80,7 +80,19 @@ def main(argv):
 
     if not '--nomusic' in g.argv:
         pygame.mixer.music.load(os.path.join('data', 'music', 'background.ogg'))
+        pygame.mixer.music.set_volume(0.3) # defaults to 0.99~ on linux
         pygame.mixer.music.play(-1)
+
+    def inc_vol():
+        pygame.mixer.music.set_volume(min(1.0, pygame.mixer.music.get_volume() + 0.1))
+        print pygame.mixer.music.get_volume()
+
+    def dec_vol():
+        pygame.mixer.music.set_volume(max(0.0, pygame.mixer.music.get_volume() - 0.1))
+        print pygame.mixer.music.get_volume()
+
+    keymap.add(ord('['), dec_vol)
+    keymap.add(ord(']'), inc_vol)
 
     active_handlers = EventHandler.active_handlers
 

@@ -105,6 +105,7 @@ class Pigeon(SpriteWorld):
         return self.isdiving() # TODO - check if out of perch
 
     def start_dive(self):
+        if self.isdead(): return
         self._state = 'diving'
         self._action = itertools.chain(
             self.do_path(self._dive_path),

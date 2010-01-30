@@ -60,6 +60,9 @@ class Sprite(object):
             self.set_pos_from_mouse_pos()
             yield 'follow_mouse'
 
+    def isdead(self):
+        return self._state == 'dying'
+
     def killed(self, killer):
         print "%s was killed by %s" % (self, killer)
         self._state = 'dying'
