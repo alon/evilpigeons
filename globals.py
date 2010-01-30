@@ -17,7 +17,7 @@ size = width, height = 1024, 768 # screen size
 #size = width, height = 320, 240 # screen size
 
 # mechanics
-pigeon_steps_per_half_path = 30
+pigeon_steps_per_half_path = 24
 
 # game points
 car_hits_to_kill = 4
