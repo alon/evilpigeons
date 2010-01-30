@@ -1,21 +1,43 @@
+import math
+from math import cos, sin
+
 import pygame
 
-from sprite import SpriteWorld, Projectile
+from sprite import SpriteWorld, Projectile, Sprite
 import globals as g
+
+class Broom(Sprite):
+    def __init__(self):
+        super(Broom, self).__init__(location=g.unit_pos_to_screen_pos(*g.config.broom_position), filename='broom.png')
+
+def edge_of_circle((x, y), angle, r):
+    return x + r*cos(angle), y + r*sin(angle)
 
 class Crosshair(SpriteWorld):
 
     def __init__(self, world):
         super(Crosshair, self).__init__(world=world, location=(0,0), filename='crosshair.png')
         self._can_shoot = True
+        self._broom = Broom()
+        self._broom_exit_point = self._broom._rect.center # will be replaced when mouse is moved first
         self._action = self.do_follow_mouse()
+        self._world.add_sprite(self._broom)
+
+    def do_follow_mouse(self):
+        for x in super(Crosshair, self).do_follow_mouse():
+            cx, cy = self._rect.center
+            rx, ry = self._broom._rect.center
+            direction = math.atan2(cy - ry, cx - rx)
+            self._broom.rotate(-direction-0.5)
+            self._broom_exit_point = edge_of_circle(self._broom._rect.center, angle=direction, r=150)
+            yield x
 
     def shoot(self):
         if not self._can_shoot: return
         # make bullet appearance point look 3d, coming from behind
         self._can_shoot = False
         x, y = pygame.mouse.get_pos()
-        self.general_shoot(projectile_class=Bullet, location=(g.width / 2, g.height), target=(x, y), done_callback=self._enable_shots)
+        self.general_shoot(projectile_class=Bullet, location=self._broom_exit_point, target=(x, y), done_callback=self._enable_shots)
 
     def _enable_shots(self):
         self._can_shoot = True

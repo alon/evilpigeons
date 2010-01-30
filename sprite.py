@@ -1,3 +1,4 @@
+from math import pi
 import itertools
 
 import pygame
@@ -8,10 +9,11 @@ import data
 class Sprite(object):
     def __init__(self, location, filename):
         self._start_location = location
-        self._sprite = data.get_sprite(filename)
+        self._sprite = self._orig_sprite = data.get_sprite(filename)
         if self._sprite is None:
             import pdb; pdb.set_trace()
         self._rect = self._sprite.get_rect()
+        self._orig_rect = self._rect
         self.set_pos(*self._start_location)
         self._state = None
         self._action = self.do_nothing()
@@ -21,6 +23,24 @@ class Sprite(object):
 
     def set_pos_from_mouse_pos(self):
         self._rect.center = pygame.mouse.get_pos()
+
+    # Sprite helpers
+    def scale(self, factor):
+        center = self._rect.center
+        start_width, start_height = self._orig_rect.size
+        target_size = (int(start_width * factor), int(start_height * factor))
+        self._sprite = pygame.transform.scale(self._orig_sprite, target_size)
+        self._rect = self._sprite.get_rect()
+        self._rect.center = center
+        print self._rect
+
+    def rotate(self, angle):
+        angle = angle * 180 / pi
+        center = self._rect.center
+        self._sprite = pygame.transform.rotate(self._orig_sprite, angle)
+        self._rect = self._sprite.get_rect()
+        print self._rect
+        self._rect.center = center
 
     # The event system: self._action is a generator, that does stuff
     # the simulate function simply lets it run until the next yield.

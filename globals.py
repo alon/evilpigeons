@@ -56,6 +56,7 @@ def unit_pos_to_screen_pos(x, y):
 
 PIGEONS_PATH_KEY_POINTS = 'pigeons_path_key_points'
 CAR_START_POSITION = 'car_start_position'
+BROOM_POSITION = 'broom_position'
 
 class Config(object):
 
@@ -64,7 +65,8 @@ class Config(object):
         [(0.3, 0.1), (0.5, 0.5)],
         [(0.7, 0.1), (0.5, 0.5)],
         [(0.9, 0.1), (0.5, 0.5)]],
-        CAR_START_POSITION : (0.5, 0.8)
+        CAR_START_POSITION : (0.5, 0.8),
+        BROOM_POSITION : (0.9, 0.9)
         }
 
     def __init__(self):
@@ -107,8 +109,12 @@ class Config(object):
     def get_pigeons_path_key_points(self):
         return self[PIGEONS_PATH_KEY_POINTS]
 
+    def get_broom_position(self):
+        return self[BROOM_POSITION]
+
     car_start_position = property(get_car_start_position)
     pigeons_path_key_points = property(get_pigeons_path_key_points)
+    broom_position = property(get_broom_position)
 
 config = Config()
 
