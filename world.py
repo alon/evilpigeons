@@ -3,12 +3,13 @@
 from pigeon import PigeonController
 from car import Car
 from crosshair import Crosshair
+from eventhandler import EventHandler
 import globals as g
 
-class World(object):
+class World(EventHandler):
 
-    def __init__(self, keymap):
-        self._keymap = keymap
+    def __init__(self):
+        super(World, self).__init__()
         self._restart()
 
     def _restart(self):

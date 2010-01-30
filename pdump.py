@@ -20,12 +20,20 @@ from crosshair import Crosshair
 import globals as g
 from keymap import KeyMap
 from world import World
+from eventhandler import EventHandler
 import mathutil
 import data
 
 def quit():
     print "Quitting.."
     sys.exit()
+
+def iter_key_events():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()
+        elif event.type == KEYDOWN:
+            yield event.key, event.mod
 
 def main(argv):
     # Init pygame
@@ -37,10 +45,12 @@ def main(argv):
     clock = pygame.time.Clock()
 
     # Build game parts
-    keymap = KeyMap()
+    main_event_handler = EventHandler()
+    keymap = main_event_handler._keymap
     keymap.add(pygame.K_ESCAPE, quit) # windows has mod == 4096, linux has mod == 0
     keymap.add(pygame.K_ESCAPE, quit, mod=4096) # windows has mod == 4096, linux has mod == 0
-    world = World(keymap=keymap)
+    EventHandler.active_handlers.add(main_event_handler)
+    world = World()
     if '--setpos' in g.argv:
         print "Use Ctrl-<Num> to set pigeon position to mouse position"
 
@@ -50,12 +60,29 @@ def main(argv):
     print keymap
 
     screen = pygame.display.set_mode(g.size)
+
+    # Help screens (no menu system)
+    for help_screen in ['help1.jpg', 'help2.jpg']:
+        print help_screen
+        help_sprite = data.get_sprite(help_screen)
+        help_rect = help_sprite.get_rect()
+        screen.blit(help_sprite, help_rect)
+        for key, mod in iter_key_events():
+            show_splash(help_screen)
+            break
+
+    # Start game
+    EventHandler.active_handlers.add(world) # overly complex..
+
     background = data.get_sprite('background.jpg')
     background_rect = background.get_rect()
 
     if not '--nomusic' in g.argv:
-        pygame.mixer.music.load('data/music/background.ogg')
+        pygame.mixer.music.load(os.path.join('data', 'music', 'background.ogg'))
         pygame.mixer.music.play()
+
+    
+    active_handlers = EventHandler.active_handlers
 
     while True:
         # update location of shotgun crosshair
@@ -64,9 +91,11 @@ def main(argv):
                 sys.exit()
             elif event.type == KEYDOWN:
                 print event.key, event.mod
-                keymap.onkey(event.key, event.mod)
+                for handler in active_handlers:
+                    handler.on_key_down(event.key, event.mod)
             elif event.type == MOUSEBUTTONDOWN:
-                world.on_mouse_down()
+                for handler in active_handlers:
+                    handler.on_mouse_down()
             elif event.type == MOUSEBUTTONUP:
                 pass
 
