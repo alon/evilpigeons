@@ -11,7 +11,7 @@ import itertools
 from math import pi, cos, sin
 
 import pygame
-from numpy import linspace
+from mathutil import linspace
 
 from sprite import SpriteWorld
 from shit import Shit
