@@ -43,3 +43,11 @@ running from the src subdirectory:
 Linux and Mac: ./run.sh
 Windows: run.bat (or just run)
 
+Program Credits
+===============
+Assets:              Maya for 3d, Photoshop
+Asset Tweaking:      gimp, Imagemagick, SoX
+Programming:         python, pygame
+Development tools:   ipython, vim
+Windows Executable:  py2exe
+
