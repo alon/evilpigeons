@@ -49,6 +49,8 @@ def main(argv):
     keymap.add(pygame.K_ESCAPE, quit) # windows has mod == 4096, linux has mod == 0
     keymap.add(pygame.K_ESCAPE, quit, mod=4096) # windows has mod == 4096, linux has mod == 0
     EventHandler.active_handlers.add(main_event_handler)
+
+    screen = pygame.display.set_mode(g.size)
     world = World()
     if '--setpos' in g.argv:
         print "Use Ctrl-<Num> to set pigeon position to mouse position"
@@ -57,8 +59,6 @@ def main(argv):
     print
     print "keys:"
     print keymap
-
-    screen = pygame.display.set_mode(g.size)
 
     # Help screens (no menu system)
     for help_screen in ['intro.png', 'help1.png', 'help2.png']:
@@ -71,7 +71,7 @@ def main(argv):
     background_rect = background.get_rect()
 
     if not '--nomusic' in g.argv:
-        pygame.mixer.music.load(os.path.join('data', 'music', 'background.ogg'))
+        pygame.mixer.music.load(os.path.join('music', 'background.ogg'))
         pygame.mixer.music.set_volume(0.3) # defaults to 0.99~ on linux
         pygame.mixer.music.play(-1)
 

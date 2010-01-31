@@ -51,7 +51,7 @@ def load_sounds():
             ('pigeon_background', 'pigeon_background.wav'),
             ('pigeon_flap', 'pigeon_flap.wav')
             ]:
-        filepath = os.path.join('data', 'sound', filename)
+        filepath = os.path.join('sound', filename)
         if not os.path.exists(filepath):
             print "Missing sound file %s" % filepath
             sys.exit(-1)
@@ -76,7 +76,7 @@ BROOM_POSITION = 'broom_position'
 
 class Config(object):
 
-    FILENAME = 'data/config.json'
+    FILENAME = 'config.json'
     DEFAULT = {PIGEONS_PATH_KEY_POINTS : [[(0.1, 0.1), (0.5, 0.5)],
         [(0.3, 0.1), (0.5, 0.5)],
         [(0.7, 0.1), (0.5, 0.5)],

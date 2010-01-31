@@ -159,6 +159,7 @@ class Pigeon(SpriteWorld):
         def explode_animation():
             # create a bunch of sprites of moving trianagles to outside
             s = pygame.Surface(size=(500,500))
+            s.set_colorkey((0,0,0))
             self._rect = rect = s.get_rect()
             rect.center = self._rect.center
             m = 100
