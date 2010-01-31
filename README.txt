@@ -13,8 +13,14 @@ Ubuntu: sudo apt-get install python-numpy python-pygame
 Linux (non ubuntu): install the python-pygame package
 
 Window:
- get python and install: http://www.python.org/ftp/python/2.6.4/python-2.6.4.msi
- get pygame and install: http://pygame.org/ftp/pygame-1.9.1.win32-py2.6.msi
+
+ Using python 2.6: (works, tested, py2exe doesn't work very well - produces executable that segfaults)
+  get python and install: http://www.python.org/ftp/python/2.6.4/python-2.6.4.msi
+  get pygame and install: http://pygame.org/ftp/pygame-1.9.1.win32-py2.6.msi
+
+ Using python 2.5:
+  http://www.python.org/ftp/python/2.5.4/python-2.5.4.msi
+  http://pygame.org/ftp/pygame-1.9.1.win32-py2.5.msi
 
 Mac OS X:
  Untested. Should work fine since pygame is known to be supported on it.
