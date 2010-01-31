@@ -139,14 +139,16 @@ class Pigeon(SpriteWorld):
             end=lambda self=self, channel=channel: (self.set_sprite(self._orig_sprite), channel.stop()))
 
     def diversion_flap(self):
+        print self._flap_sprites
         self._state = 'diversion_flap'
-        sprites = self._flap_sprites
         if self._rect.center[0] < g.width / 2:
-            sprites = [pygame.transform.flip(sprite, True, False) for sprite in sprites]
+            sprites = [pygame.transform.flip(sprite, True, False) for sprite in self._flap_sprites]
+        else:
+            sprites = list(self._flap_sprites)
         sprites.append(self._orig_sprite)
         channel = self._start_flap_sound()
         flap_animation_gen = self.do_animate([(x, 0) for x in sprites]*3)
-        if not channel: # can happen if we run out of channels, max defaults to 8
+        if channel is None: # can happen if we run out of channels, max defaults to 8
             print "Warning: ran out of channels"
             self._action = flap_animation_gen
         else:
