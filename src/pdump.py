@@ -34,9 +34,11 @@ def main(argv):
     pygame.init()
     if not '--window' in g.argv:
         #import pdb; pdb.set_trace()
-        pygame.display.set_mode((1024, 768),
+        screen = pygame.display.set_mode(g.size,
             pygame.NOFRAME | pygame.DOUBLEBUF |
             pygame.FULLSCREEN) #pygame.HWSURFACE
+    else:
+        screen = pygame.display.set_mode(g.size)
     print pygame.mixer.get_init()
     pygame.display.set_caption('Evil Pigeons')
     pygame.mouse.set_visible(0)
@@ -49,8 +51,6 @@ def main(argv):
     keymap.add(pygame.K_ESCAPE, quit) # windows has mod == 4096, linux has mod == 0
     keymap.add(pygame.K_ESCAPE, quit, mod=4096) # windows has mod == 4096, linux has mod == 0
     EventHandler.active_handlers.add(main_event_handler)
-
-    screen = pygame.display.set_mode(g.size)
     world = World()
     if '--setpos' in g.argv:
         print "Use Ctrl-<Num> to set pigeon position to mouse position"
