@@ -1,16 +1,27 @@
-Evil Pigeons
-============
+Evil Pigeons Development README
+===============================
 
-A 2-player game between an evil pigeon master that controls the pigeons, who wish to shit-load a fancy car, and a mad car owner who wishes to exterminate the nasty pigeons before they succeed.
+The main readme for game play and running is provided in the release directory, ../release/README.txt
 
-Installing Prerequisites
-========================
+Getting the Source
+==================
 
-Python version: The game was tested with python 2.6.4, but should work with 2.4 and above.
+The source is hosted on github at.
+    Repository page:    http://github.com/alon/evilpigeons
+    The git url is:     git://github.com/alon/evilpigeons.git
 
-Ubuntu: sudo apt-get install python-numpy python-pygame
+To get:
+ 1. install git
+  Ubuntu: sudo apt-get install git-core
+  Linux: use the package manager
+  Windows: Install using the installer here: http://code.google.com/p/msysgit
+ 2. clone:
+  git clone git://github.com/alon/evilpigeons.git
 
-Linux (non ubuntu): install the python-pygame package
+Python version: The game was tested with python 2.6.4, and 2.5.4, but should work with 2.4 and above.
+
+Ubuntu: sudo apt-get install python-pygame
+Other Linux: install the python-pygame package
 
 Window:
 
@@ -25,15 +36,10 @@ Window:
 Mac OS X:
  Untested. Should work fine since pygame is known to be supported on it.
 
-Running
-=======
+Running from Source subdirectory
+================================
+running from the src subdirectory:
 
 Linux and Mac: ./run.sh
 Windows: run.bat (or just run)
-
-Game play
-=========
-
-Mad car owner: Mouse to move cursor, button to shoot. You can't kill a perched pigeon. Notice the lag between shots.
-Piegons: keypad 1-4 to dive shit, keypad 1-4 and shift to mimic a dive without actually diving.
 
