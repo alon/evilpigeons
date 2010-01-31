@@ -12,10 +12,10 @@ AUTHOR_NAME = 'Evil Pegions group Global Game Jam 2010'
 AUTHOR_EMAIL = 'nobody@example.com'
 AUTHOR_URL = "http://www.globalgamejam.org/2010/evil-pigeons"
 PRODUCT_NAME = "Evil Pigeons"
-SCRIPT_MAIN = 'src/main.py'
+SCRIPT_MAIN = 'main.py' #os.path.join('src','main.py')
 VERSIONSTRING = PRODUCT_NAME + " ALPHA " + VERSION
 ICONFILE = 'icon.ico'
- 
+
 # Remove the build tree on exit automatically
 REMOVE_BUILD_ON_EXIT = True
 PYGAMEDIR = os.path.split(pygame.base.__file__)[0]
@@ -25,8 +25,8 @@ SDL_DLLS = glob.glob(os.path.join(PYGAMEDIR,'*.dll'))
 if os.path.exists('dist/'): shutil.rmtree('dist/')
 os.makedirs(os.path.join('dist', 'data'))
 # TODO: ICONFILE
-extra_files = [ ("",['README.txt'])] + ['data', os.path.join('src', 'data', 'config.json')
-    ] + [(os.path.join('data', x), glob.glob(os.path.join('src','data',x,filter))) for
+extra_files = [ ("",['README.txt'])] + [('', [os.path.join('src', 'config.json')])
+    ] + [(x, glob.glob(os.path.join('src',x,filter))) for
       x, filter in [('images', '*.png'),
       ('music', '*.wav'), ('music', '*.ogg'),
       ('sound', '*.wav'), ('sound', '*.ogg')]]
@@ -73,7 +73,7 @@ MODULE_EXCLUDES =[
 INCLUDE_STUFF = ['encodings',"encodings.latin_1",]
  
 #'icon_resources': [(1,ICONFILE)]
-setup(windows=[
+setup(console=[
              {'script': SCRIPT_MAIN,
                'other_resources': [(u"VERSIONTAG",1,VERSIONSTRING)],
                }],

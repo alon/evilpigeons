@@ -73,6 +73,16 @@ PIGEONS_PATH_KEY_POINTS = 'pigeons_path_key_points'
 CAR_START_POSITION = 'car_start_position'
 BROOM_POSITION = 'broom_position'
 
+try:
+    import json
+    json_loads = json.loads
+except:
+    if '--setpos' in argv:
+        print "WARNING: no json - you won't be able to save config.param"
+    print "using eval instead of json.loads"
+    def json_loads(s):
+        return eval(s)
+
 class Config(object):
 
     FILENAME = 'config.json'
@@ -88,15 +98,6 @@ class Config(object):
         # Initial data - pigeons location, target (car) location, anything
         existing_data = None
         try:
-            try:
-                import json
-                json_loads = json.loads
-            except:
-                if '--setpos' in g.argv:
-                    print "WARNING: no json - you won't be able to save config.param"
-                print "using eval instead of json.loads"
-                def json_loads(s):
-                    return eval(s)
             existing_data = json_loads(open(self.FILENAME).read())
             assert(set(existing_data.keys()) == set(self.DEFAULT.keys()))
         except (IOError, ValueError, AssertionError), e:
@@ -111,7 +112,7 @@ class Config(object):
             else:
                 self._data = self.DEFAULT
             self.save()
-        self._data = json.load(open(self.FILENAME))
+        self._data = json_loads(open(self.FILENAME).read())
 
     def save(self):
         fd = open(self.FILENAME, 'w+')
