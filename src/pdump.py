@@ -10,6 +10,7 @@
 import os
 import sys
 from collections import defaultdict
+import time
 
 import pygame
 from pygame.locals import *
@@ -48,7 +49,8 @@ def main(argv):
     # Build game parts
     main_event_handler = EventHandler()
     keymap = main_event_handler._keymap
-    keymap.add(pygame.K_ESCAPE, quit) # windows has mod == 4096, linux has mod == 0
+    keymap.add(g.quit_key, quit) # windows has mod == 4096, linux has mod == 0
+    # windows quit key (hardcoded quit key for windows 7 - not sure if the same for the rest)
     keymap.add(pygame.K_ESCAPE, quit, mod=4096) # windows has mod == 4096, linux has mod == 0
     EventHandler.active_handlers.add(main_event_handler)
     world = World()
@@ -91,6 +93,7 @@ def main(argv):
     world.start_background_sound()
 
     while True:
+        print "time", time.time()
         # update location of shotgun crosshair
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

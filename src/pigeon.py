@@ -25,11 +25,18 @@ import mathutil
 def num_to_numkey(num):
     if num > 9 or num < 0:
         raise Exception("No numkey for num %s" % num)
-    return [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_0][num]
+    return g.pigeon_flight_keys[num]
 
 def second_key(num):
     """ for editing paths, a second key for each pegion """
-    return map(ord, 'qwertyuiop')[num]
+    return map(ord, g.editing_keys)[num]
+
+################################################################################
+# channel fake object for case where too many channels are occupied
+
+class BogusChannel(object):
+    def stop(self):
+        pass
 
 ################################################################################
 # Pigeon controller
@@ -124,7 +131,7 @@ class Pigeon(SpriteWorld):
         c = g.sounds['pigeon_flap'].play()
         if c is None:
             print "STRANGE BUG #1 - g.sounds['pigeon_flap'].play() returned None"
-            return None
+            return BogusChannel()
         c.set_volume(2.0) # default 1.0
         return c
 

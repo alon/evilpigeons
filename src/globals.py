@@ -21,7 +21,11 @@ argv = sys.argv # to be program options..
 
 dt = 50 # milliseconds. Time per frame. Determines movement per frame of pigeons, shit.
 fps = int(1000.0 / dt)
+#size = width, height = 640, 480 # screen size
 size = width, height = 1024, 768 # screen size
+sprite_design_size = sprite_width, sprite_height = 1024, 768
+assert(width*sprite_height == height*sprite_width) # make sure aspect ratio is the same, avoid floating point for fun
+sprite_load_zoom = 1 if sprite_width == width else float(width) / sprite_width
 #size = width, height = 320, 240 # screen size
 
 # mechanics
@@ -56,6 +60,12 @@ def load_sounds():
             sys.exit(-1)
         sounds[key] = pygame.mixer.Sound(filepath)
         print '%s - %s seconds' % (key, sounds[key].get_length())
+
+################################################################################
+# keyboard (can customize for different devices)
+pigeon_flight_keys = [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_0]
+editing_keys = 'qwertyuiop'
+quit_key = pygame.K_ESCAPE
 
 ################################################################################
 # Utilities
